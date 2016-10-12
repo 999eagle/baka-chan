@@ -55,6 +55,10 @@ def main():
 	asyncio.ensure_future(wakeup())
 	log.log_debug('Async wakeup running')
 
+	# load APIs
+	globals.api_steam.load_api()
+	log.log_debug('Steam API loaded')
+
 	print('Press Ctrl+C to exit')
 	globals.start_time = datetime.datetime.now()
 	# now run the discord client

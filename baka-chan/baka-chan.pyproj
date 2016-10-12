@@ -37,6 +37,9 @@
     <Compile Include="cmd_rps.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="cmd_steam.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="command.py">
       <SubType>Code</SubType>
     </Compile>
