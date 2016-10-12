@@ -72,3 +72,6 @@ def sender_has_permission(message, perm):
 		return globals.data_permissions.user_has_permission(message.server.id, message.author.id, perm)
 	except ValueError:
 		return False
+
+def is_steam_user_id(user):
+	return is_int(user) and len(str(user)) == 17

@@ -19,20 +19,22 @@ def set_up_logging(log_level=logging.INFO):
 
 	# set up discord logger
 	logger = logging.getLogger('discord')
-	logger.setLevel(log_level)
+	logger.setLevel(logging.DEBUG)
 	logger.handlers.clear()
 	handler = logging.handlers.TimedRotatingFileHandler(log_path + 'discord.log', when='midnight', backupCount=7, encoding='utf8')
 	handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+	handler.setLevel(log_level)
 	logger.addHandler(handler)
 	if print_handler != None:
 		logger.addHandler(print_handler)
 
 	# set up baka logger
 	logger = logging.getLogger('baka')
-	logger.setLevel(log_level)
+	logger.setLevel(logging.DEBUG)
 	logger.handlers.clear()
 	handler = logging.handlers.TimedRotatingFileHandler(log_path + 'baka.log', when='midnight', backupCount=7, encoding='utf8')
 	handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+	handler.setLevel(log_level)
 	logger.addHandler(handler)
 	if print_handler != None:
 		logger.addHandler(print_handler)

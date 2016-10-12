@@ -14,3 +14,6 @@ class ConfigNotLoadedException(BakaException):
 
 class InvalidSettingException(BakaException):
 	pass
+
+class SteamDataException(BakaException):
+	pass
