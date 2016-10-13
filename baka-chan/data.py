@@ -5,6 +5,7 @@ from enum import Enum
 import globals
 from platform_specific import PlatformSpecific
 from errors import *
+import log
 
 all_data = []
 
@@ -44,6 +45,7 @@ class Data(object):
 		with open(self.path, 'w') as file:
 			json.dump(self.data, file)
 		self.dirty = False
+		log.log_debug('Saved data file {0}'.format(self.path))
 
 	def getserver(self, server_id):
 		if not server_id in self.data:
@@ -87,6 +89,8 @@ class DataStrikes(Data):
 		del server[user_id]
 	def addstrike(self, server_id, user_id):
 		self.setvalue(server_id, user_id, self.getstrikes(server_id, user_id) + 1)
+	def removestrike(self, server_id, user_id):
+		self.setvalue(server_id, user_id, self.getstrikes(server_id, user_id) - 1)
 
 class DataSettings(Data):
 	"""Stores server settings."""
@@ -105,6 +109,18 @@ class DataSettings(Data):
 			raise InvalidSettingException('Setting "{0}" is unknown.'.format(setting))
 		self.setvalue(server_id, setting, value)
 
+	# helper for strike n
+	def get_strike(self, server_id, strike):
+		if 1 <= strike <= 7:
+			return getattr(self, 'get_strike_' + str(strike))(server_id)
+		else:
+			raise InvalidSettingException('Strike must be between 1 and 7 inclusive.')
+	def set_strike(self, server_id, strike, action):
+		if 1 <= strike <= 7:
+			return getattr(self, 'set_strike_' + str(strike))(server_id, action)
+		else:
+			raise InvalidSettingException('Strike must be between 1 and 7 inclusive.')
+
 	# welcome_channel
 	def get_welcome_channel(self, server_id):
 		return self.getsetting(server_id, 'welcome_channel')
@@ -112,37 +128,37 @@ class DataSettings(Data):
 		self.setsetting(server_id, 'welcome_channel', channel_id)
 	# strike_1
 	def get_strike_1(self, server_id):
-		return self.getserver(server_id, 'strike_1')
+		return self.getsetting(server_id, 'strike_1')
 	def set_strike_1(self, server_id, action):
 		self.setsetting(server_id, 'strike_1', action)
 	# strike_2
 	def get_strike_2(self, server_id):
-		return self.getserver(server_id, 'strike_2')
+		return self.getsetting(server_id, 'strike_2')
 	def set_strike_2(self, server_id, action):
 		self.setsetting(server_id, 'strike_2', action)
 	# strike_3
 	def get_strike_3(self, server_id):
-		return self.getserver(server_id, 'strike_3')
+		return self.getsetting(server_id, 'strike_3')
 	def set_strike_3(self, server_id, action):
 		self.setsetting(server_id, 'strike_3', action)
 	# strike_4
 	def get_strike_4(self, server_id):
-		return self.getserver(server_id, 'strike_4')
+		return self.getsetting(server_id, 'strike_4')
 	def set_strike_4(self, server_id, action):
 		self.setsetting(server_id, 'strike_4', action)
 	# strike_5
 	def get_strike_5(self, server_id):
-		return self.getserver(server_id, 'strike_5')
+		return self.getsetting(server_id, 'strike_5')
 	def set_strike_5(self, server_id, action):
 		self.setsetting(server_id, 'strike_5', action)
 	# strike_6
 	def get_strike_6(self, server_id):
-		return self.getserver(server_id, 'strike_6')
+		return self.getsetting(server_id, 'strike_6')
 	def set_strike_6(self, server_id, action):
 		self.setsetting(server_id, 'strike_6', action)
 	# strike_7
 	def get_strike_7(self, server_id):
-		return self.getserver(server_id, 'strike_7')
+		return self.getsetting(server_id, 'strike_7')
 	def set_strike_7(self, server_id, action):
 		self.setsetting(server_id, 'strike_7', action)
 

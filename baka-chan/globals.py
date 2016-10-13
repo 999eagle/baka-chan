@@ -6,6 +6,7 @@ from data import *
 from steam import Steam
 
 version_str = 'v0.4'
+dev_id = '111563848405798912'
 running_in_foreground = False
 config = Config()
 client = Client()

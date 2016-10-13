@@ -21,7 +21,10 @@ def is_rolemention(s:str):
 	return is_mention(s) and s[2] == '&' and is_int(s[3:-1])
 
 async def send_message(channel, message):
-	log.log_debug('Sending message to channel {0} on {1}. Content: {2}'.format(channel.id, channel.server.id, message))
+	if isinstance(channel, discord.Channel):
+		log.log_debug('Sending message to channel {0} on {1}. Content: {2}'.format(channel.id, channel.server.id, message))
+	elif isinstance(channel, discord.User):
+		log.log_debug('Sending message to user {0}. Content: {1}'.format(channel.id, message))
 	try:
 		await globals.client.send_message(channel, message)
 		return True
@@ -48,7 +51,10 @@ images = {'pay_respects':('pay_respects.jpg',''),
 		  'notwork':('notwork.png','http://i.imgur.com/CA1RMf7.png')}
 
 async def send_image(channel, image):
-	log.log_debug('Sending image to channel {0} on {1}. Key: {2}'.format(channel.id, channel.server.id, image))
+	if isinstance(channel, discord.Channel):
+		log.log_debug('Sending image to channel {0} on {1}. Key: {2}'.format(channel.id, channel.server.id, image))
+	elif isinstance(channel, discord.User):
+		log.log_debug('Sending image to user {0}. Key: {1}'.format(channel.id, message))
 	send_directly = True
 	if not image in images:
 		return False
