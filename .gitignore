@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 .ptvs/
 pyvenv.cfg
+baka-chan/data/

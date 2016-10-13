@@ -59,6 +59,18 @@ def main():
 	globals.api_steam.load_api()
 	log.log_debug('Steam API loaded')
 
+	from data import Data
+
+	Data.load_all()
+	log.log_debug('Data loaded')
+
+	async def save_periodically():
+		while True:
+			await asyncio.sleep(10)
+			Data.save_all_dirty()
+	asyncio.ensure_future(save_periodically())
+	log.log_debug('Async saving running')
+
 	print('Press Ctrl+C to exit')
 	globals.start_time = datetime.datetime.now()
 	# now run the discord client
@@ -82,6 +94,8 @@ def main():
 			pass
 		# close the event loop in the end
 		loop.close()
+
+	Data.save_all_dirty()
 
 	cleanup()
 	log.log_info('Baka-chan {0} stopping'.format(globals.version_str))

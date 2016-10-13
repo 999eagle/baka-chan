@@ -28,6 +28,9 @@
     <Compile Include="client_events.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="cmd_admin.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="cmd_bc_games.py">
       <SubType>Code</SubType>
     </Compile>
