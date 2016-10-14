@@ -8,6 +8,7 @@ from steam import Steam
 version_str = 'v0.4'
 dev_id = '111563848405798912'
 running_in_foreground = False
+disabled = False
 config = Config()
 client = Client()
 data_coins = DataCoins()

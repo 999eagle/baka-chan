@@ -6,6 +6,7 @@ import log
 import commands
 from command import Command
 from util import *
+from cmd_dev import cmd_dev
 
 @globals.client.event
 async def on_ready():
@@ -27,17 +28,14 @@ async def on_message(message):
 			return
 		log.log_debug('Message received. Content: ' + message.content)
 		private = message.channel.is_private
-		# TODO: fix this
-		#is_dev = (message.author.id == globals.dev_id)
-		is_dev = False
+		is_dev = (message.author.id == globals.dev_id)
 		content = message.content.lower()
 		split = [x for x in content.split(' ') if x]
 		tag = globals.config.cmd_tag
-		# TODO: fix this
-		#if globals.disabled:
-		#	if private and is_dev:
-		#		await cmd_dev(message, split)
-		#	return
+		if globals.disabled:
+			if private and is_dev:
+				await cmd_dev(message, split)
+			return
 
 		if not tag.endswith(' '):
 			if split[0].startswith(tag):
@@ -56,9 +54,8 @@ async def on_message(message):
 						await send_message(message.channel, 'The command `{0}` may not be used in a private channel.'.format(split[1], tag))
 					else:
 						await send_message(message.channel, 'Unknown command `{0}`. Type `{1}help`, to get a list with commands.'.format(split[1], tag))
-		# TODO: fix this
-		#elif private and is_dev:
-		#	await cmd_dev(message, split)
+		elif private and is_dev:
+			await cmd_dev(message, split)
 		#else:
 		#	def normalize_lyrics(l: str):
 		#		s = l.lower().rstrip(' !.?')
@@ -77,13 +74,12 @@ async def on_message(message):
 	except:
 		text = traceback.format_exc()
 		log.log_error(text)
-		# TODO: fix this
-		#text = 'Exception:\n' + text
-		#user = discord.User(id=g.dev_id)
-		#while text != '':
-		#	if len(text) > 1990:
-		#		await send_message(user, '```\n' + text[:1990] + '\n```')
-		#		text = text[1990:]
-		#	else:
-		#		await send_message(user, '```\n' + text + '\n```')
-		#		text = ''
+		text = 'Exception:\n' + text
+		user = discord.User(id = globals.dev_id)
+		while text != '':
+			if len(text) > 1990:
+				await send_message(user, '```\n' + text[:1990] + '\n```')
+				text = text[1990:]
+			else:
+				await send_message(user, '```\n' + text + '\n```')
+				text = ''
