@@ -49,7 +49,7 @@ images = {'pay_respects':('pay_respects.jpg',''),
 		  'lewd':('lewd.jpg',''),
 		  'boom':('','https://giphy.com/gifs/computer-gZBYbXHtVcYKs'),
 		  'notwork':('notwork.png','http://i.imgur.com/CA1RMf7.png'),
-          'trustme':('trustme.png','')}
+		  'trustme':('trustme.png','')}
 
 async def send_image(channel, image):
 	if isinstance(channel, discord.Channel):
