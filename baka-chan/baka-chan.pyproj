@@ -34,6 +34,9 @@
     <Compile Include="cmd_bc_games.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="cmd_dev.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="cmd_general.py">
       <SubType>Code</SubType>
     </Compile>
