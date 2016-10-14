@@ -145,7 +145,7 @@ async def cmd_notwork(message, args): pass
 @Helptext('Trust me')
 @Command('trustme')
 async def cmd_trustme(message, args):
-    await send_image(message.channel, 'trustme')
+	await send_image(message.channel, 'trustme')
 
 @Helptext('Shows a link to invite me to other servers.')
 @Command('invite',allow_private=True)

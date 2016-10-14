@@ -10,7 +10,7 @@ class IEconItems_730(steamwebapi.api._SteamWebAPI):
 	def __init__(self,**kwargs):
 		self.interface = 'IEconItems_730'
 		super(IEconItems_730, self).__init__(**kwargs)
-	
+
 	def get_player_items(self, steamID, format=None):
 		"""Request the items of a given steam ID.
 
@@ -21,8 +21,7 @@ class IEconItems_730(steamwebapi.api._SteamWebAPI):
 		parameters = {'steamid' : steamID}
 		if format is not None:
 			parameters['format'] = format
-		url = self.create_request_url(self.interface, 'GetPlayerItems', 1,
-			parameters)
+		url = self.create_request_url(self.interface, 'GetPlayerItems', 1, parameters)
 		data = self.retrieve_request(url)
 		return self.return_data(data, format=format)
 
@@ -76,7 +75,7 @@ class Steam:
 				log.log_info('Didn\'t receive Steam API data (ISteamUser/ResolveVanityURL)')
 				data = False
 			self._setcachedata(self.cache_vanityurls, self.cache_vanityurls_time, vanity_url, data)
-		
+
 		if data == False:
 			raise SteamDataException('Vanity URL couldn\'t be resolved.')
 		return data
@@ -98,7 +97,7 @@ class Steam:
 				log.log_info('Didn\'t receive Steam API data (ISteamUser/GetPlayerSummaries)')
 				data = False
 			self._setcachedata(self.cache_userinfo, self.cache_userinfo_time, user_id, data)
-		
+
 		if data == False:
 			raise SteamDataException('Couldn\'t get user information.')
 		return data
@@ -117,7 +116,7 @@ class Steam:
 				log.log_info('Didn\'t receive Steam API data (ISteamUserStats/GetUserStatsForGame)')
 				data = False
 			self._setcachedata(self.cache_userinventory_730, self.cache_userinventory_time, user_id, data)
-		
+
 		if data == False:
 			raise SteamDataException('Couldn\'t get user stats.')
 		return data
@@ -136,5 +135,5 @@ class Steam:
 				log.log_info('Didn\'t receive Steam API data (IEconItems_730/GetPlayerItems)')
 				data = False
 			self._setcachedata(self.cache_userinventory_730, self.cache_userinventory_time, user_id, data)
-		
+
 		return data

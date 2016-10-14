@@ -98,7 +98,7 @@ class DataSettings(Data):
 	def __init__(self):
 		super(DataSettings, self).__init__('settings.json')
 		self.default_settings = {'welcome_channel':'',
-						   'strike_1':'nothing','strike_2':'nothing','strike_3':'kick','strike_4':'mutetext,mutevoice','strike_5':'ban','strike_6':'nothing','strike_7':'nothing'}
+		                         'strike_1':'nothing','strike_2':'nothing','strike_3':'kick','strike_4':'mutetext,mutevoice','strike_5':'ban','strike_6':'nothing','strike_7':'nothing'}
 
 	def getsetting(self, server_id, setting):
 		if setting not in self.default_settings:
