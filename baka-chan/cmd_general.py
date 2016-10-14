@@ -47,7 +47,7 @@ async def cmd_info(message, args):
 	if len(args) != 1 or not is_usermention(args[0]):
 		await send_message(message.channel, 'Usage: `{0}info <@user>`'.format(globals.config.cmd_tag))
 		return
-	id = args[0][2:-1]
+	id = get_id_from_mention(args[0])
 	user = None
 	for m in message.server.members:
 		if m.id == id:

@@ -53,7 +53,7 @@ async def cmd_strike(message, args):
 		return
 	if len(args) == 2 and args[0] in ('add','remove','clear') and is_usermention(args[1]):
 		server_id = message.server.id
-		user_id = args[1][2:-1]
+		user_id = get_id_from_mention(args[1])
 		strikes = globals.data_strikes.getstrikes(server_id, user_id)
 		changed = False
 		if args[0] == 'add':
@@ -113,7 +113,7 @@ async def cmd_ban(message, args):
 		await send_message(message.channel, globals.message_no_permission)
 		return
 	if len(args) == 1 and is_usermention(args[0]):
-		member = message.server.get_member(args[0][2:-1])
+		member = message.server.get_member(get_id_from_mention(args[0]))
 		try:
 			await globals.client.ban(member)
 			await send_message(message.channel, '{0} was banned from the server'.format(member.mention))
@@ -129,7 +129,7 @@ async def cmd_kick(message, args):
 		await send_message(message.channel, globals.message_no_permission)
 		return
 	if len(args) == 1 and is_usermention(args[0]):
-		member = message.server.get_member(args[0][2:-1])
+		member = message.server.get_member(get_id_from_mention(args[0]))
 		try:
 			await globals.client.kick(member)
 			await send_message(message.channel, '{0} was kicked from the server'.format(member.mention))
@@ -153,10 +153,10 @@ async def cmd_perms(message, args):
 			return
 		if is_usermention(args[0]):
 			def check(perm):
-				return globals.data_permissions.user_has_permission(message.server.id, args[0][2:-1], perm)
+				return globals.data_permissions.user_has_permission(message.server.id, get_id_from_mention(args[0]), perm)
 		elif is_rolemention(args[0]):
 			def check(perm):
-				return globals.data_permissions.role_has_permission(message.server.id, args[0][3:-1], perm)
+				return globals.data_permissions.role_has_permission(message.server.id, get_id_from_mention(args[0]), perm)
 		else:
 			def check(perm):
 				return False
@@ -176,7 +176,7 @@ async def cmd_perms(message, args):
 	if not (len(args) == 3 and is_rolemention(args[0]) and args[1] in ('give','remove')):
 		await send_message(message.channel, 'Usage: `{0}perms <@role> (give|remove) <permission>`'.format(globals.config.cmd_tag))
 		return
-	role_id = args[0][3:-1]
+	role_id = get_id_from_mention(args[0])
 	perm_list = args[2].split(',')
 	perms = []
 	for p in perm_list:

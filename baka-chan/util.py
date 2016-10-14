@@ -15,7 +15,18 @@ def is_mention(s:str):
 	return s.startswith('<@') and s.endswith('>')
 
 def is_usermention(s:str):
-	return is_mention(s) and s[2] != '&' and is_int(s[2:-1])
+	if not is_mention(s):
+		return False
+	# user mentions are: <@id> for normal usernames and <@!id> for members with a nickname
+	return (s[2] != '&' and is_int(s[2:-1])) or (s[2] == '!' and is_int(s[3:-1]))
+
+def get_id_from_mention(s:str):
+	if not is_mention(s):
+		raise ValueError
+	if is_int(s[2:-1]):
+		return s[2:-1]
+	else:
+		return s[3:-1]
 
 def is_rolemention(s:str):
 	return is_mention(s) and s[2] == '&' and is_int(s[3:-1])
