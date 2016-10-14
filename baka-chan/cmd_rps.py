@@ -18,14 +18,14 @@ class Rps:
 
 	def start_game(self, server, player1, player2, bet, is_rpsls):
 		if globals.data_coins.getcoins(server, player1) < bet:
-			return (False, '{1} only has {2} {0}')
+			return (False, '<@{1}> only has {2} {0}')
 		if globals.data_coins.getcoins(server, player2) < bet:
-			return (False, '{3} only has {4} {0}')
+			return (False, '<@{3}> only has {4} {0}')
 		for game in self.active_games:
 			if game.p1 == player1 or game.p2 == player1:
-				return (False, '{1} is already in a game of rock-paper-scissors')
+				return (False, '<@{1}> is already in a game of rock-paper-scissors')
 			if game.p1 == player2 or game.p2 == player2:
-				return (False, '{3} is already in a game of rock-paper-scissors')
+				return (False, '<@{3}> is already in a game of rock-paper-scissors')
 		game = RpsGame(server, player1, player2, bet, is_rpsls)
 		self.active_games.append(game)
 		asyncio.ensure_future(self.game_timeout(game))
@@ -35,7 +35,7 @@ class Rps:
 		await asyncio.sleep(globals.config.rps_timeout)
 		if game.status == 0:
 			self.end_game(game)
-			await send_message(game.channel, '{0} didn\'t accept {1}\'s challenge in time.'.format(game.p2, game.p1))
+			await send_message(game.channel, '<@{0}> didn\'t accept <@{1}>\'s challenge in time.'.format(game.p2, game.p1))
 
 	def end_game(self, game):
 		self.active_games.remove(game)
@@ -82,10 +82,10 @@ class RpsGame:
 async def cmd_rps(message, args):
 	server = message.server.id
 	rps = Rps.instance()
-	player1 = '<@' + message.author.id + '>'
+	player1_id = message.author.id
 	if len(args) in (2, 3) and is_int(args[1]) and is_usermention(args[0]):
-		player2 = args[0]
-		if player1 == player2:
+		player2_id = get_id_from_mention(args[0])
+		if player1_id == player2_id:
 			await send_message(message.channel, 'You can\'t challenge yourself to a game of rock-paper-scissors.')
 			return
 		bet = int(args[1])
@@ -93,22 +93,22 @@ async def cmd_rps(message, args):
 			await send_message(message.channel, 'You have to bet at least 1 {0}'.format(globals.config.currency_name))
 			return
 		rpsls = False
-		if globals.config.rps_allow_rpspls and len(args) == 3 and args[2] == 'rpsls':
+		if globals.config.rps_allow_rpsls and len(args) == 3 and args[2] == 'rpsls':
 			rpsls = True
-		result = rps.start_game(server, player1, player2, bet, rpsls)
+		result = rps.start_game(server, player1_id, player2_id, bet, rpsls)
 		if result[0] == False:
-			await send_message(message.channel, result[1].format(globals.config.currency_name, player1, globals.data_coins.getcoins(server, player1), player2, globals.data_coins.getcoins(server, player2)))
+			await send_message(message.channel, result[1].format(globals.config.currency_name, player1_id, globals.data_coins.getcoins(server, player1_id), player2_id, globals.data_coins.getcoins(server, player2_id)))
 		else:
 			result[1].channel = message.channel
-			await send_message(message.channel, '{0}, you have been challenged to a game of rock-paper-scissors. You can accept in the next {2} seconds with `{1}rps a`.'.format(player2, globals.config.cmd_tag, str(globals.config.rps_timeout)))
+			await send_message(message.channel, '<@{0}>, you have been challenged to a game of rock-paper-scissors. You can accept in the next {2} seconds with `{1}rps a`.'.format(player2_id, globals.config.cmd_tag, str(globals.config.rps_timeout)))
 	elif len(args) == 1 and args[0] == 'a':
-		game = rps.get_activegame(player1)
+		game = rps.get_activegame(player1_id)
 		if game == None:
-			await send_message(message.channel, '{0}, you have not been challenged to a game of rock-paper-scissors.'.format(player1))
+			await send_message(message.channel, '<@{0}>, you have not been challenged to a game of rock-paper-scissors.'.format(player1_id))
 		elif game.status != 0:
 			await send_message(message.channel, 'This game is already running.')
-		elif game.p1 == player1:
-			await send_message(message.channel, '{0}, you started this game yourself, you don\'t have to accept.'.format(player1))
+		elif game.p1 == player1_id:
+			await send_message(message.channel, '<@{0}>, you started this game yourself, you don\'t have to accept.'.format(player1_id))
 		else:
 			game.status = 1 # player2 accepted
 			if game.is_rpsls:
@@ -117,7 +117,7 @@ async def cmd_rps(message, args):
 			else:
 				option_text = '"rock", "paper" or "scissors"'
 				options = ('rock','paper','scissors')
-			await send_message(game.channel, '{0}, you accepted {1}\'s challenge. Both please DM me your choices. No special tag is needed, just send me {2}.'.format(player1, game.p1, option_text))
+			await send_message(game.channel, '<@{0}>, you accepted <@{1}>\'s challenge. Both please DM me your choices. No special tag is needed, just send me {2}.'.format(player1_id, game.p1, option_text))
 			asyncio.ensure_future(cmd_rps_continue(game, 1, options))
 			asyncio.ensure_future(cmd_rps_continue(game, 2, options))
 	else:
@@ -129,8 +129,8 @@ async def cmd_rps_continue(game, player_idx, options:list):
 	else:
 		player = game.p2
 	def check(msg):
-		return msg.author.mention == player and msg.content.lower() in options and msg.channel.is_private
-	msg = await g.client.wait_for_message(check=check)
+		return msg.author.id == player and msg.content.lower() in options and msg.channel.is_private
+	msg = await globals.client.wait_for_message(check=check)
 	choice = options.index(msg.content.lower())
 	if player_idx == 1:
 		game.p1_choice = choice
@@ -147,13 +147,13 @@ async def cmd_rps_continue(game, player_idx, options:list):
 		if winner == 0:
 			message = 'both of you chose ' + game.p1_text + '. That\'s a tie.'
 		else:
-			message = game.p1 + ' chose ' + game.p1_text + ', ' + game.p2 + ' chose ' + game.p2_text + '. '
+			message = '<@{0}> chose {1}, <@{2}> chose {3}. '.format(game.p1, game.p1_text, game.p2, game.p2_text)
 			if winner == 1:
-				message += 'That\'s a win for ' + game.p1 + '!'
+				message += 'That\'s a win for <@' + game.p1 + '>!'
 				globals.data_coins.setcoins(game.server, game.p1, globals.data_coins.getcoins(game.server, game.p1) + game.bet)
 				globals.data_coins.setcoins(game.server, game.p2, globals.data_coins.getcoins(game.server, game.p2) - game.bet)
 			elif winner == 2:
-				message += 'That\'s a win for ' + game.p2 + '!'
+				message += 'That\'s a win for <@' + game.p2 + '>!'
 				globals.data_coins.setcoins(game.server, game.p1, globals.data_coins.getcoins(game.server, game.p1) - game.bet)
 				globals.data_coins.setcoins(game.server, game.p2, globals.data_coins.getcoins(game.server, game.p2) + game.bet)
 		await send_message(game.channel, message)
