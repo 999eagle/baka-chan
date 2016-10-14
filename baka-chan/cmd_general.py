@@ -114,6 +114,19 @@ async def cmd_poke(message, args):
 	await send_message(message.channel, text)
 	await send_image(message.channel, 'poke')
 
+@Helptext('Have Baka-chan slap you or another user.','[<@user>]')
+@Command('slap')
+async def cmd_slap(message, args):
+	if len(args) == 0:
+		slap = message.author.mention
+	elif is_usermention(args[0]):
+		slap = args[0]
+	else:
+		slap = message.author.mention
+	text = '*Baka-chan slaps ' + slap + '*'
+	await send_message(message.channel, text)
+	await send_image(message.channel, 'slap')
+
 @Helptext('Rates someone or something from 0 to 100.','<waifu>')
 @Command('ratewaifu')
 async def cmd_ratewaifu(message, args):
@@ -146,6 +159,11 @@ async def cmd_notwork(message, args): pass
 @Command('trustme')
 async def cmd_trustme(message, args):
 	await send_image(message.channel, 'trustme')
+
+@Helptext('You are a \'Global Retard\'')
+@Command('silver')
+@StaticResponse('silver')
+async def cmd_silver(message, args): pass
 
 @Helptext('Shows a link to invite me to other servers.')
 @Command('invite',allow_private=True)
