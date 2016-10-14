@@ -135,6 +135,11 @@ async def cmd_ratewaifu(message, args):
 	else:
 		await send_message(message.channel, 'Usage: `{0}ratewaifu <waifu>`'.format(globals.config.cmd_tag))
 
+@Helptext('Shows a link to invite me to other servers.')
+@Command('invite',allow_private=True)
+async def cmd_invite(message, args):
+	await send_message(message.channel, 'If you want to invite me to your server, use this link: https://discordapp.com/oauth2/authorize?client_id={0}&scope=bot.'.format(globals.client.user.id))
+
 @Helptext('Pay respects.')
 @Command('f')
 async def cmd_f(message, args):
@@ -144,31 +149,6 @@ async def cmd_f(message, args):
 @Command('lewd')
 async def cmd_lewd(message, args):
 	await send_image(message.channel, 'lewd')
-
-@Helptext('Boom.')
-@Command('boom')
-@StaticResponse('boom')
-async def cmd_boom(message, args): pass
-
-@Helptext('That\'s not how it works.')
-@Command('notwork')
-@StaticResponse('notwork')
-async def cmd_notwork(message, args): pass
-
-@Helptext('Trust me')
-@Command('trustme')
-async def cmd_trustme(message, args):
-	await send_image(message.channel, 'trustme')
-
-@Helptext('You are a \'Global Retard\'')
-@Command('silver')
-@StaticResponse('silver')
-async def cmd_silver(message, args): pass
-
-@Helptext('Shows a link to invite me to other servers.')
-@Command('invite',allow_private=True)
-async def cmd_invite(message, args):
-	await send_message(message.channel, 'If you want to invite me to your server, use this link: https://discordapp.com/oauth2/authorize?client_id={0}&scope=bot.'.format(globals.client.user.id))
 
 @Helptext('Show information about me.')
 @Command('about',allow_private=True)
@@ -186,3 +166,35 @@ async def cmd_about(message, args):
 		text += '{0}d '.format(uptime_days)
 	text += '{0}h {1}min {2}s'.format(uptime_hours, uptime_min, uptime_sec)
 	await send_message(message.channel, text)
+
+@Command('boom')
+@StaticResponse('boom')
+async def cmd_boom(message, args): pass
+
+@Command('notwork')
+@StaticResponse('notwork')
+async def cmd_notwork(message, args): pass
+
+@Command('trustme')
+@StaticResponse('trustme')
+async def cmd_trustme(message, args): pass
+
+@Command('silver')
+@StaticResponse('silver')
+async def cmd_silver(message, args): pass
+
+@Command('calmdown')
+@StaticResponse('calmdown')
+async def cmd_calmdown(message, args): pass
+
+@Command('cover_up')
+@StaticResponse('cover_up')
+async def cmd_cover_up(message, args): pass
+
+@Command('strip')
+@StaticResponse('strip')
+async def cmd_strip(message, args): pass
+
+@Command('you_aint_kawaii')
+@StaticResponse('you_aint_kawaii')
+async def cmd_you_aint_kawaii(message, args): pass
