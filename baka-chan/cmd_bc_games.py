@@ -6,7 +6,7 @@ from command import Command, Helptext
 from data import DataPermissions
 import globals
 from util import *
-		
+
 @Helptext('Take {0} from a user.'.format(globals.config.currency_name),'despawn <@user> <{0}>'.format(globals.config.currency_name),permission=DataPermissions.Permission.coins_despawn)
 @Helptext('Give a user {0}.'.format(globals.config.currency_name),'spawn <@user> <{0}>'.format(globals.config.currency_name),permission=DataPermissions.Permission.coins_spawn)
 @Helptext('Give your own {0} to another user'.format(globals.config.currency_name),'give <@user> <{0}>'.format(globals.config.currency_name))
