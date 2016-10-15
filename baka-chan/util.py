@@ -1,4 +1,8 @@
 import discord, discord.errors
+import os
+import platform
+import subprocess
+import asyncio
 
 import globals
 import log
@@ -117,3 +121,12 @@ def sender_has_permission(message, perm):
 
 def is_steam_user_id(user):
 	return is_int(user) and len(str(user)) == 17
+
+async def ping(host):
+	""" Returns True if host responds to a single ping request."""
+	ping_str = "-n 1" if platform.system().lower() == "windows" else "-c 1"
+	command = "ping " + ping_str + " " + host
+	proc = subprocess.Popen(command)
+	while proc.poll() == None:
+		await asyncio.sleep(.01)
+	return proc.returncode == 0
