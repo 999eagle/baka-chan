@@ -62,7 +62,8 @@ images = {'pay_respects':('pay_respects.jpg',''),
           'notwork':('notwork.png','http://i.imgur.com/CA1RMf7.png'),
           'trustme':('trustme.png',''),
           'silver':('silver.gif',''),
-          'slap':('slap1.gif','')}
+          'slap':('slap1.gif',''),
+          'rainbow':('animurainbow.gif','')}
 
 async def send_image(channel, image):
 	if isinstance(channel, discord.Channel):
