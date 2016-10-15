@@ -195,7 +195,7 @@ async def cmd_cover_up(message, args): pass
 @StaticResponse('strip')
 async def cmd_strip(message, args): pass
 
-@Command('you_aint_kawaii')
+@Command('youaintkawaii')
 @StaticResponse('you_aint_kawaii')
 async def cmd_you_aint_kawaii(message, args): pass
 
