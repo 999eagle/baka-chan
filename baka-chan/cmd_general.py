@@ -2,6 +2,7 @@ import discord
 import datetime
 import random
 import asyncio
+import time
 
 from command import Command, StaticResponse, Helptext
 import globals
@@ -72,7 +73,10 @@ async def cmd_info(message, args):
 @Helptext('Replies with "Pong".')
 @Command('ping')
 async def cmd_ping(message, args):
-	await send_message(message.channel, 'Pong')
+	start = time.time()
+	result = await ping(globals.client.ws.host)
+	duration = time.time() - start
+	await send_message(message.channel, 'Pong\nRTT: {0}ms'.format(int(duration*1000)))
 
 @Helptext('Generate a random number between 1 and <number> (both inclusive).','D<number>')
 @Command('roll')
