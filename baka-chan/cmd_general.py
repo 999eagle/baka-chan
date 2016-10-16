@@ -73,10 +73,11 @@ async def cmd_info(message, args):
 @Helptext('Replies with "Pong".')
 @Command('ping')
 async def cmd_ping(message, args):
-	start = time.time()
 	result = await ping(globals.client.ws.host)
-	duration = time.time() - start
-	await send_message(message.channel, 'Pong\nRTT: {0}ms'.format(int(duration*1000)))
+	if result == -1:
+		await send_message(message.channel, 'The discord servers did not answer my ping, somehow you still can read this.')
+	else:
+		await send_message(message.channel, 'Pong\nRTT: {0}ms'.format(result))
 
 @Helptext('Generate a random number between 1 and <number> (both inclusive).','D<number>')
 @Command('roll')

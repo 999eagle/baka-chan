@@ -45,13 +45,7 @@ class Command:
 
 	def __call__(self, func):
 
-		async def wrapper(message, split):
-			if split[1] in self.command_names:
-				await func(message, split[2:])
-				return True
-			else:
-				return False
-		impl = CommandWrapper(wrapper, self.command_names, **self.kwargs)
+		impl = CommandWrapper(func, self.command_names, **self.kwargs)
 		all_commands.append(impl)
 		return impl
 
@@ -86,5 +80,9 @@ class CommandWrapper:
 		self.command_names = command_names
 		self.allow_private = kwargs.get('allow_private', False)
 
-	def __call__(self, message, split):
-		return self.func(message, split)
+	async def __call__(self, message, split):
+		if split[1] in self.command_names:
+			await self.func(message, split)
+			return True
+		else:
+			return False
