@@ -106,6 +106,18 @@ async def cmd_choose(message, args):
 		choice = choices[random.randint(0, len(choices) - 1)]
 		await send_message(message.channel, 'I pick **{0}**.'.format(choice))
 
+@Helptext('Have Baka-chan calculate something for you.', '<Number 1> <Operator> <Number 2>')
+@Command('calc')
+async def cmd_calc(message, args):
+	if len(args) <= 2:
+		await send_message(message.channel, 'baka')
+	else:
+		num1 = float(args[2])
+		num2 = float(args[4])
+		operator = args[3]
+		result = str(num1 operator num2)
+		await send_message(message.channel, result)
+
 @Helptext('Have Baka-chan poke you or another user.','[<@user>]')
 @Command('poke')
 async def cmd_poke(message, args):
