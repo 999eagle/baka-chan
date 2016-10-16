@@ -183,10 +183,6 @@ async def cmd_notwork(message, args): pass
 @StaticResponse('trustme')
 async def cmd_trustme(message, args): pass
 
-@Command('silver')
-@StaticResponse('silver')
-async def cmd_silver(message, args): pass
-
 @Command('calmdown')
 @StaticResponse('calmdown')
 async def cmd_calmdown(message, args): pass
@@ -195,17 +191,9 @@ async def cmd_calmdown(message, args): pass
 @StaticResponse('cover_up')
 async def cmd_cover_up(message, args): pass
 
-@Command('strip')
-@StaticResponse('strip')
-async def cmd_strip(message, args): pass
-
 @Command('youaintkawaii')
 @StaticResponse('you_aint_kawaii')
 async def cmd_you_aint_kawaii(message, args): pass
-
-@Command('rainbow')
-@StaticResponse('rainbow')
-async def cmd_rainbow(message, args): pass
 
 @Command('thumbsup')
 async def cmd_thumbs_up(message, args):
