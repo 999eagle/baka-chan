@@ -207,8 +207,6 @@ async def cmd_you_aint_kawaii(message, args): pass
 @StaticResponse('rainbow')
 async def cmd_rainbow(message, args): pass
 
-#commands for testing my idea
-
 @Command('thumbsup')
 async def cmd_thumbs_up(message, args):
-    await send_thumbs_up(message.channel, 'thumbs_up3')
+	await send_random_image(message.channel, 'thumbs_up')

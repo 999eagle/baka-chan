@@ -3,6 +3,7 @@ import os
 import platform
 import subprocess
 import asyncio
+import random
 
 import globals
 import log
@@ -47,6 +48,7 @@ async def send_message(channel, message):
 		log.log_warning('Forbidden to speak in channel {0}({1}) on {2}({3})'.format(channel.name, channel.id, channel.server.name, channel.server.id))
 		return False
 
+image_counts = {'gtfo': 3, 'thumbs_up': 4, 'wtf': 4, 'lewdapprove': 2}
 images = {'pay_respects':('pay_respects.jpg',''),
           'poke':('poke.jpg','http://s15.postimg.org/a2515gqzf/poke.jpg'),
           'calmdown':('calmdown.jpg',''),
@@ -97,7 +99,7 @@ async def send_image(channel, image):
 		log.log_debug('Sending image to user {0}. Key: {1}'.format(channel.id, message))
 	send_directly = True
 	if not image in images:
-		return False
+		raise NameError('No image with that key found')
 	try:
 		data = images[image]
 		if send_directly and data[0] != '':
@@ -110,6 +112,13 @@ async def send_image(channel, image):
 	except discord.errors.Forbidden:
 		log.log_warning('Forbidden to speak in channel {0}({1}) on {2}({3})'.format(channel.name, channel.id, channel.server.name, channel.server.id))
 	return False
+
+async def send_random_image(channel, image):
+	if image not in image_counts:
+		raise NameError('No randomizable image with that key found')
+	index = random.randint(1, image_counts[image])
+	return await send_image(channel, image + str(index))
+
 
 def sender_has_permission(message, perm):
 	if message.server == None:
@@ -130,33 +139,3 @@ async def ping(host):
 	while proc.poll() == None:
 		await asyncio.sleep(.01)
 	return proc.returncode == 0
-
-#To test some stuff, i'll write some code down here. It is solely to play with a concept i just thought of while trying to sleep...
-
-thumbs_up = {'thumbs_up1':('thumbs1.png',''),
-             'thumbs_up2':('thumbs2.jpg',''),
-             'thumbs_up3':('thumbs3.jpg',''),
-             'thumbs_up4':('thumbs4.jpg','')}
-
-#copied your send_image command and tried to make it send images from my thumbs_up list
-
-async def send_thumbs_up(channel, image):
-	if isinstance(channel, discord.Channel):
-		log.log_debug('Sending image to channel {0} on {1}. Key: {2}'.format(channel.id, channel.server.id, image))
-	elif isinstance(channel, discord.User):
-		log.log_debug('Sending image to user {0}. Key: {1}'.format(channel.id, message))
-	send_directly = True
-	if not image in thumbs_up:
-		return False
-	try:
-		data = thumbs_up[image]
-		if send_directly and data[0] != '':
-				await globals.client.send_file(channel, PlatformSpecific.inst().convert_path('img\\' + data[0]))
-				return True
-		else:
-			if data[1] != '':
-				await globals.client.send_message(channel, data[1])
-				return True
-	except discord.errors.Forbidden:
-		log.log_warning('Forbidden to speak in channel {0}({1}) on {2}({3})'.format(channel.name, channel.id, channel.server.name, channel.server.id))
-	return False
