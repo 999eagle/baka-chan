@@ -199,3 +199,15 @@ async def cmd_you_aint_kawaii(message, args): pass
 @Command('thumbsup')
 async def cmd_thumbs_up(message, args):
 	await send_random_image(message.channel, 'thumbs_up')
+
+@Command('fu')
+async def cmd_fu(message, args):
+	await send_random_image(message.channel, 'fu')
+
+@Command('gtfo')
+async def cmd_gtfo(message, args):
+	await send_random_image(message.channel, 'gtfo')
+
+@Command('wtf')
+async def cmd_wtf(message, args):
+	await send_random_image(message.channel, 'wtf')
