@@ -4,6 +4,8 @@ import platform
 import subprocess
 import asyncio
 import random
+import time
+import re
 
 import globals
 import log
@@ -116,7 +118,21 @@ async def ping(host):
 	""" Returns True if host responds to a single ping request."""
 	ping_str = "-n 1" if platform.system().lower() == "windows" else "-c 1"
 	command = "ping " + ping_str + " " + host
-	proc = subprocess.Popen(command)
+	start = time.time()
+	proc = subprocess.Popen(command, stdout = subprocess.PIPE)
 	while proc.poll() == None:
-		await asyncio.sleep(.01)
-	return proc.returncode == 0
+		await asyncio.sleep(.02) # poll every 20 ms for completion of ping
+	end = time.time()
+	if proc.returncode != 0:
+		return -1 # host unreachable / doesn't reply to ping
+	stdout = proc.communicate()[0].decode('utf-8')
+	log.log_debug('Received ping reply: ' + stdout)
+	ping_time = end - start
+	if platform.system().lower() == "windows":
+		pattern = re.compile('Average = (?P<time>[0-9]+)ms')
+	else:
+		pattern = re.compile('rtt min/avg/max/mdev = [0-9]+\\.[0-9]+/(?P<time>[0-9]+)\\.[0-9]+/.+/.+ ms')
+	result = pattern.search(stdout)
+	if result != None:
+		ping_time = int(result.groups('time')[0])
+	return ping_time
