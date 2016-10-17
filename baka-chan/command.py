@@ -3,40 +3,6 @@ from util import *
 from errors import *
 
 all_commands = []
-help = []
-
-class Helptext:
-	"""Decorator to add a helptext to a command. May only be applied """
-	def __init__(self, *args, **kwargs):
-		self.perm = kwargs.get('permission',DataPermissions.Permission.none)
-		self.before_text = kwargs.get('before_text')
-		self.after_text = kwargs.get('after_text')
-		self.text = args[0]
-		if len(args) > 1:
-			self.command = args[1]
-		else:
-			self.command = ''
-
-	def __call__(self, func):
-		if isinstance(func, CommandWrapper):
-			cmd = func.command_names[0]
-			if self.command != '':
-				cmd += ' ' + self.command
-			self.command = cmd
-			help.append(self)
-		return func
-
-	@classmethod
-	def get_help(cls, req_message):
-		text = ''
-		for h in help:
-			if sender_has_permission(req_message, h.perm):
-				if h.before_text != None:
-					text += h.before_text + '\n'
-				text += '`{0}`: {1}\n'.format(h.command, h.text)
-				if h.after_text != None:
-					text += h.after_text + '\n'
-		return text
 
 class Command:
 	"""Decorator to mark a function as bot command."""
@@ -58,6 +24,14 @@ class Command:
 				if result:
 					return True
 		return False
+
+	@classmethod
+	def get_help(cls, req_message):
+		text = ''
+		for c in all_commands:
+			if c.help != None and sender_has_permission(req_message, c.permission):
+				text += '`{0}`: {1}\n'.format(c.full_usage(), c.help)
+		return text
 
 class StaticResponse:
 	"""Decorator to create a bot-command that will always return the same, static response."""
@@ -101,6 +75,13 @@ class CommandWrapper:
 		self.help = kwargs.get('help', None)
 		self.usage = kwargs.get('usage', None)
 		self.permission = kwargs.get('permission', DataPermissions.Permission.none)
+
+	def full_usage(self):
+		usage_str = ''
+		if self.usage != None:
+			for argument in self.usage:
+				usage_str += ' ' + self.generate_usage_str(argument)
+		return '{0}{1}{2}'.format(globals.config.cmd_tag, self.command_names[0], usage_str)
 
 	def parse_arg(self, raw_arg, usage):
 		if isinstance(usage, str):
@@ -156,6 +137,9 @@ class CommandWrapper:
 					name = split[0].strip()
 					type = split[1].strip()
 					return '<' + name + '>'
+			elif usage.startswith('*'):
+				# usage is rest of arguments
+				return usage[1:]
 			else:
 				# usage is plain text and must match exactly
 				return usage
@@ -181,6 +165,10 @@ class CommandWrapper:
 					is_optional = False
 					if isinstance(argument, tuple) and argument[0] == 'optional':
 						is_optional = True
+					if isinstance(argument, str) and argument.startswith('*'):
+						for a in raw_args[index:]:
+							parsed_args.append(a)
+						break
 					if len(raw_args) <= index:
 						if is_optional:
 							raw_arg = ''
@@ -208,9 +196,6 @@ class CommandWrapper:
 			for c in available_commands_same_name:
 				if c.help == None:
 					continue
-				usage_str = ''
-				for argument in c.usage:
-					usage_str += ' ' + c.generate_usage_str(argument)
-				text += '\n`{0}{1}{2}`'.format(globals.config.cmd_tag, c.command_names[0], usage_str)
+				text += '\n`{0}`'.format(c.full_usage())
 			await send_message(message.channel, text)
 			return True

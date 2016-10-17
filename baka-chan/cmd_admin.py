@@ -175,58 +175,33 @@ async def cmd_settings_get(message, setting):
 		if text == '':
 			text = 'No actions defined'
 		await send_message(message.channel, text)
+	else:
+		raise ArgumentParseException()
 
-
-#@Helptext('Modified settings.','(get <setting> | set <setting> <value>)', permission = DataPermissions.Permission.settings,
-#		  after_text = 'Available settings: welcome, strike')
-#@Command('settings')
-#async def cmd_settings(message, args):
-#	if not sender_has_permission(message, DataPermissions.Permission.settings):
-#		await send_message(message.channel, globals.message_no_permission)
-#		return
-#	server_id = message.server.id
-#	if len(args) > 1 and args[0] == 'set':
-#		if args[1] == 'welcome':
-#			await send_message(message.channel, 'Do you want me to announce newly joined people in this channel? If so, please answer "yes" within 5 seconds.')
-#			msg = await globals.client.wait_for_message(author = message.author, content = 'yes', timeout = 5)
-#			if msg == None:
-#				await send_message(message.channel, 'Time expired, nothing was changed')
-#			else:
-#				globals.data_settings.set_welcome_channel(server_id, message.channel.id)
-#				await send_message(message.channel, 'New people will be announced here from now on.')
-#		elif args[1] == 'strike':
-#			if len(args) == 4 and is_int(args[2]):
-#				strike = int(args[2])
-#				if strike < 1 or strike > 7:
-#					await send_message(message.channel, 'Strike must be between 1 and 7 inclusive.')
-#					return
-#				actions = args[3].split(',')
-#				for a in actions:
-#					if not a in strike_actions:
-#						await send_message(message.channel, 'Unknown action `{0}`'.format(a))
-#						return
-#				globals.data_settings.set_strike(server_id, strike, args[3])
-#				await send_message(message.channel, 'Action changed')
-#	elif len(args) > 1 and args[0] == 'get':
-#		if args[1] == 'welcome':
-#			channel_id = globals.data_settings.get_welcome_channel(server_id)
-#			if channel_id == '':
-#				await send_message(message.channel, 'No channel for greetings set.')
-#			else:
-#				channel = globals.client.get_channel(channel_id)
-#				await send_message(message.channel, 'Greetings will be sent to {0}'.format(channel.name))
-#		elif args[1] == 'strike':
-#			strikes = []
-#			for i in range(1,8):
-#				strikes.append(globals.data_settings.get_strike(server_id, i))
-#			text = ''
-#			for i in range(0, len(strikes)):
-#				if strikes[i] != 'nothing':
-#					if i == 1:
-#						plural = ''
-#					else:
-#						plural = 's'
-#					text += '{0} strike{1}: {2}\n'.format(i + 1, plural, strikes[i])
-#			if text == '':
-#				text = 'No actions defined'
-#			await send_message(message.channel, text)
+@Command('settings', help = 'Change a setting.', usage = ('set','<setting:str>','*[<value>]'), permission = DataPermissions.Permission.settings)
+async def cmd_settings_set(message, setting, *args):
+	if setting == 'welcome':
+		await send_message(message.channel, 'Do you want me to announce newly joined people in this channel? If so, please answer "yes" within 5 seconds.')
+		msg = await globals.client.wait_for_message(author = message.author, content = 'yes', timeout = 5)
+		if msg == None:
+			await send_message(message.channel, 'Time expired, nothing was changed')
+		else:
+			globals.data_settings.set_welcome_channel(message.server.id, message.channel.id)
+			await send_message(message.channel, 'New people will be announced here from now on.')
+	elif setting == 'strike':
+		if len(args) >= 2 and is_int(args[0]):
+			strike = int(args[0])
+			if strike < 1 or strike > 7:
+				await send_message(message.channel, 'Strike must be between 1 and 7 inclusive.')
+				return
+			actions = args[1].split(',')
+			for a in actions:
+				if not a in strike_actions:
+					await send_message(message.channel, 'Unknown action `{0}`'.format(a))
+					return
+			globals.data_settings.set_strike(message.server.id, strike, args[1])
+			await send_message(message.channel, 'Action changed')
+		else:
+			raise ArgumentParseException()
+	else:
+		raise ArgumentParseException()

@@ -7,12 +7,25 @@ import time
 from command import Command, StaticResponse
 import globals
 from util import *
+from errors import *
 
 @Command('help', help = 'Shows this help.', allow_private = True)
 async def cmd_help(message):
-	help_msg = '**Baka-chan** {1}\nMade by **The999eagle#6302**\n\nAll commands must be prefixed with `{0}`.\n\n'.format(globals.config.cmd_tag.strip(), globals.version_str)
-	help_msg += Helptext.get_help(message)
-	await send_message(message.author, help_msg)
+	help_msg = '**Baka-chan** {1}\nMade by **The999eagle#6302**\n\n'.format(globals.config.cmd_tag.strip(), globals.version_str)
+	help_msg += Command.get_help(message)
+	lines = help_msg.split('\n')
+	current_len = 0
+	current_text = ''
+	for line in lines:
+		line_len = len(line)
+		if current_len + line_len + 1 > 2000:
+			await send_message(message.author, current_text)
+			current_len = line_len
+			current_text = line
+		else:
+			current_text += '\n' + line
+			current_len += 1 + line_len
+	await send_message(message.author, current_text)
 
 @Command('mods', help = 'Shows the mods on the server.')
 async def cmd_mods(message):
@@ -72,32 +85,29 @@ async def cmd_ping(message):
 	else:
 		await send_message(message.channel, 'Pong\nRTT: {0}ms'.format(result))
 
-#@Helptext('Generate a random number between 1 and <number> (both inclusive).','D<number>')
-#@Command('roll')
-#async def cmd_roll(message, args):
-#	if len(args) == 1 and args[0].startswith('d') and is_int(args[0][1:]):
-#		number = int(args[0][1:])
-#		if number <= 1:
-#			await send_message(message.channel, 'Try a number greater than 1, baka!')
-#		else:
-#			await send_message(message.channel, 'Rolling a ' + str(number) + ' sided :game_die: ...\nRolled a ' + str(random.randint(1, number)))
-#	else:
-#		await send_message(message.channel, 'Usage: `{0}roll D<number>`'.format(globals.config.cmd_tag))
+@Command('roll', help = 'Generate a random number between 1 and <number>.', usage = ('*D<number>',))
+async def cmd_roll(message, *args):
+	if len(args) == 1 and args[0].startswith('d') and is_int(args[0][1:]):
+		number = int(args[0][1:])
+		if number <= 1:
+			await send_message(message.channel, 'Try a number greater than 1, baka!')
+		else:
+			await send_message(message.channel, 'Rolling a ' + str(number) + ' sided :game_die: ...\nRolled a ' + str(random.randint(1, number)))
+	else:
+		raise ArgumentParseException()
 
-#@Helptext('Choose between different options.','<text> | <text> | ...')
-#@Command('choose')
-#async def cmd_choose(message, args):
-#	if len(args) == 0:
-#		await send_message(message.channel, 'Usage: `{0}choose <text> | <text> | ...`'.format(globals.config.cmd_tag))
-#		return
-#	choices = [x.strip() for x in ' '.join(args).split('|')]
-#	if len(choices) == 1:
-#		await send_message(message.channel, 'Do you really want me to choose from a single option? Well, let me think about this for a while....')
-#		await asyncio.sleep(10)
-#		await send_message(message.channel, 'I finally decided! I pick **{0}**.'.format(choices[0]))
-#	else:
-#		choice = choices[random.randint(0, len(choices) - 1)]
-#		await send_message(message.channel, 'I pick **{0}**.'.format(choice))
+@Command('choose', help = 'Choose between different options.', usage = ('*<text> | <text> | ...',))
+async def cmd_choose(message, *args):
+	if len(args) == 0:
+		raise ArgumentParseException()
+	choices = [x.strip() for x in ' '.join(args).split('|')]
+	if len(choices) == 1:
+		await send_message(message.channel, 'Do you really want me to choose from a single option? Well, let me think about this for a while....')
+		await asyncio.sleep(10)
+		await send_message(message.channel, 'I finally decided! I pick **{0}**.'.format(choices[0]))
+	else:
+		choice = choices[random.randint(0, len(choices) - 1)]
+		await send_message(message.channel, 'I pick **{0}**.'.format(choice))
 
 @Command('poke', help = 'Have Baka-chan poke you or another user.', usage = (('optional','<@user>'),))
 async def cmd_poke(message, mention):
@@ -127,15 +137,13 @@ async def cmd_ratewaifu(message, waifu):
 async def cmd_invite(message):
 	await send_message(message.channel, 'If you want to invite me to your server, use this link: https://discordapp.com/oauth2/authorize?client_id={0}&scope=bot.'.format(globals.client.user.id))
 
-#@Helptext('Pay respects.')
-#@Command('f')
-#async def cmd_f(message, args):
-#	await send_image(message.channel, 'pay_respects')
+@Command('f', help = 'Pay respects.')
+async def cmd_f(message, args):
+	await send_image(message.channel, 'pay_respects')
 
-#@Helptext('Shows an image with "lewd".')
-#@Command('lewd')
-#async def cmd_lewd(message, args):
-#	await send_image(message.channel, 'lewd')
+@Command('lewd', help = 'Shows an image with "lewd".')
+async def cmd_lewd(message, args):
+	await send_image(message.channel, 'lewd')
 
 @Command('about', help = 'Show information about me.', allow_private = True)
 async def cmd_about(message):
@@ -153,30 +161,30 @@ async def cmd_about(message):
 	text += '{0}h {1}min {2}s'.format(uptime_hours, uptime_min, uptime_sec)
 	await send_message(message.channel, text)
 
-#@Command('boom')
-#@StaticResponse('boom')
-#async def cmd_boom(message, args): pass
+@Command('boom')
+@StaticResponse('boom')
+async def cmd_boom(message, args): pass
 
-#@Command('notwork')
-#@StaticResponse('notwork')
-#async def cmd_notwork(message, args): pass
+@Command('notwork')
+@StaticResponse('notwork')
+async def cmd_notwork(message, args): pass
 
-#@Command('trustme')
-#@StaticResponse('trustme')
-#async def cmd_trustme(message, args): pass
+@Command('trustme')
+@StaticResponse('trustme')
+async def cmd_trustme(message, args): pass
 
-#@Command('calmdown')
-#@StaticResponse('calmdown')
-#async def cmd_calmdown(message, args): pass
+@Command('calmdown')
+@StaticResponse('calmdown')
+async def cmd_calmdown(message, args): pass
 
-#@Command('cover_up')
-#@StaticResponse('cover_up')
-#async def cmd_cover_up(message, args): pass
+@Command('cover_up')
+@StaticResponse('cover_up')
+async def cmd_cover_up(message, args): pass
 
-#@Command('youaintkawaii')
-#@StaticResponse('you_aint_kawaii')
-#async def cmd_you_aint_kawaii(message, args): pass
+@Command('youaintkawaii')
+@StaticResponse('you_aint_kawaii')
+async def cmd_you_aint_kawaii(message, args): pass
 
-#@Command('thumbsup')
-#async def cmd_thumbs_up(message, args):
-#	await send_random_image(message.channel, 'thumbs_up)'
+@Command('thumbsup')
+async def cmd_thumbs_up(message, args):
+	await send_random_image(message.channel, 'thumbs_up')
