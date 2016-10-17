@@ -4,17 +4,17 @@ import random
 import asyncio
 import time
 
-from command import Command, StaticResponse, Helptext
+from command import Command, StaticResponse
 import globals
 from util import *
 
-@Command('help', allow_private=True, help='Shows this help.')
+@Command('help', help = 'Shows this help.', allow_private = True)
 async def cmd_help(message):
 	help_msg = '**Baka-chan** {1}\nMade by **The999eagle#6302**\n\nAll commands must be prefixed with `{0}`.\n\n'.format(globals.config.cmd_tag.strip(), globals.version_str)
 	help_msg += Helptext.get_help(message)
 	await send_message(message.author, help_msg)
 
-@Command('mods', help='Shows the mods on the server.')
+@Command('mods', help = 'Shows the mods on the server.')
 async def cmd_mods(message):
 	server = message.server
 	mod_roles = []
@@ -40,11 +40,8 @@ async def cmd_mods(message):
 		text = 'No mods are on this server somehow'
 	await send_message(message.channel, text)
 
-@Command('info', help='Shows information about a user.', usage=('<@user>',))
+@Command('info', help = 'Shows information about a user.', usage = ('<@user>',))
 async def cmd_info(message, mention):
-	#if len(args) != 1 or not is_usermention(args[0]):
-	#	await send_message(message.channel, 'Usage: `{0}info <@user>`'.format(globals.config.cmd_tag))
-	#	return
 	id = mention.id
 	user = None
 	for m in message.server.members:
@@ -67,8 +64,7 @@ async def cmd_info(message, mention):
 		text += '**Avatar URL:** {0}\n'.format(user.avatar_url)
 	await send_message(message.channel, text)
 
-@Helptext('Replies with "Pong".')
-@Command('ping')
+@Command('ping', help = 'Replies with "Pong" and the current round trip time from the bot to the discord servers.')
 async def cmd_ping(message):
 	result = await ping(globals.client.ws.host)
 	if result == -1:
@@ -103,8 +99,8 @@ async def cmd_ping(message):
 #		choice = choices[random.randint(0, len(choices) - 1)]
 #		await send_message(message.channel, 'I pick **{0}**.'.format(choice))
 
-@Command('poke', help='Have Baka-chan poke you or another user.', usage=(('optional','<@user>'),))
-async def cmd_poke(message, mention = None):
+@Command('poke', help = 'Have Baka-chan poke you or another user.', usage = (('optional','<@user>'),))
+async def cmd_poke(message, mention):
 	if mention == None:
 		poke = message.author.mention
 	else:
@@ -113,31 +109,23 @@ async def cmd_poke(message, mention = None):
 	await send_message(message.channel, text)
 	await send_image(message.channel, 'poke')
 
-#@Helptext('Have Baka-chan slap you or another user.','[<@user>]')
-#@Command('slap')
-#async def cmd_slap(message, args):
-#	if len(args) == 0:
-#		slap = message.author.mention
-#	elif is_usermention(args[0]):
-#		slap = args[0]
-#	else:
-#		slap = message.author.mention
-#	text = '*Baka-chan slaps ' + slap + '*'
-#	await send_message(message.channel, text)
-#	await send_image(message.channel, 'slap')
+@Command('slap', help = 'Have Baka-chan slap you or another user.', usage = (('optional','<@user>'),))
+async def cmd_slap(message, mention):
+	if mention == None:
+		slap = message.author.mention
+	else:
+		slap = mention.mention
+	text = '*Baka-chan slaps ' + slap + '*'
+	await send_message(message.channel, text)
+	await send_image(message.channel, 'slap')
 
-#@Helptext('Rates someone or something from 0 to 100.','<waifu>')
-#@Command('ratewaifu')
-#async def cmd_ratewaifu(message, args):
-#	if len(args) == 1:
-#		await send_message(message.channel, 'I\'d rate {0} a **{1:.2f}/100**'.format(args[0], random.randint(0, 10000) / 100.0))
-#	else:
-#		await send_message(message.channel, 'Usage: `{0}ratewaifu <waifu>`'.format(globals.config.cmd_tag))
+@Command('ratewaifu', help = 'Rates someone or something from 0 to 100.', usage = ('<waifu:str>',))
+async def cmd_ratewaifu(message, waifu):
+	await send_message(message.channel, 'I\'d rate {0} a **{1:.2f}/100**'.format(waifu, random.randint(0, 10000) / 100.0))
 
-#@Helptext('Shows a link to invite me to other servers.')
-#@Command('invite',allow_private=True)
-#async def cmd_invite(message, args):
-#	await send_message(message.channel, 'If you want to invite me to your server, use this link: https://discordapp.com/oauth2/authorize?client_id={0}&scope=bot.'.format(globals.client.user.id))
+@Command('invite', help = 'Shows a link to invite me to other servers.', allow_private = True)
+async def cmd_invite(message):
+	await send_message(message.channel, 'If you want to invite me to your server, use this link: https://discordapp.com/oauth2/authorize?client_id={0}&scope=bot.'.format(globals.client.user.id))
 
 #@Helptext('Pay respects.')
 #@Command('f')
@@ -149,22 +137,21 @@ async def cmd_poke(message, mention = None):
 #async def cmd_lewd(message, args):
 #	await send_image(message.channel, 'lewd')
 
-#@Helptext('Show information about me.')
-#@Command('about',allow_private=True)
-#async def cmd_about(message, args):
-#	text = '__**Baka-chan** {0}__\n**Made by:** The999eagle#6302\n**API-Binding:** discord.py v0.13\n**Current uptime:** '.format(globals.version_str)
-#	uptime_total = int((datetime.datetime.now() - globals.start_time).total_seconds())
-#	uptime_sec = uptime_total % 60
-#	uptime_total = int((uptime_total - uptime_sec) / 60)
-#	uptime_min = uptime_total % 60
-#	uptime_total = int((uptime_total - uptime_min) / 60)
-#	uptime_hours = uptime_total % 24
-#	uptime_total = int((uptime_total - uptime_hours) / 24)
-#	uptime_days = uptime_total
-#	if uptime_days > 0:
-#		text += '{0}d '.format(uptime_days)
-#	text += '{0}h {1}min {2}s'.format(uptime_hours, uptime_min, uptime_sec)
-#	await send_message(message.channel, text)
+@Command('about', help = 'Show information about me.', allow_private = True)
+async def cmd_about(message):
+	text = '__**Baka-chan** {0}__\n**Made by:** The999eagle#6302\n**API-Binding:** discord.py v0.13\n**Current uptime:** '.format(globals.version_str)
+	uptime_total = int((datetime.datetime.now() - globals.start_time).total_seconds())
+	uptime_sec = uptime_total % 60
+	uptime_total = int((uptime_total - uptime_sec) / 60)
+	uptime_min = uptime_total % 60
+	uptime_total = int((uptime_total - uptime_min) / 60)
+	uptime_hours = uptime_total % 24
+	uptime_total = int((uptime_total - uptime_hours) / 24)
+	uptime_days = uptime_total
+	if uptime_days > 0:
+		text += '{0}d '.format(uptime_days)
+	text += '{0}h {1}min {2}s'.format(uptime_hours, uptime_min, uptime_sec)
+	await send_message(message.channel, text)
 
 #@Command('boom')
 #@StaticResponse('boom')

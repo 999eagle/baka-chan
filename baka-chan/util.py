@@ -10,6 +10,7 @@ import re
 import globals
 import log
 from platform_specific import PlatformSpecific
+from data import DataPermissions
 
 def is_int(s):
 	try:
@@ -104,7 +105,7 @@ async def send_random_image(channel, image):
 
 
 def sender_has_permission(message, perm):
-	if message.server == None:
+	if message.server == None or perm == DataPermissions.Permission.none:
 		return True
 	try:
 		return globals.data_permissions.user_has_permission(message.server.id, message.author.id, perm)
