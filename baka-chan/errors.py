@@ -17,3 +17,6 @@ class InvalidSettingException(BakaException):
 
 class SteamDataException(BakaException):
 	pass
+
+class ArgumentParseException(BakaException):
+	pass
