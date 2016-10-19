@@ -102,6 +102,8 @@ class CommandWrapper:
 						return ParseResult(result = raw_arg)
 					elif type == 'int' and is_int(raw_arg):
 						return ParseResult(result = int(raw_arg))
+					elif type == 'float' and is_float(raw_arg):
+						return ParseResult(result = float(raw_arg))
 			else:
 				# usage is plain text and must match exactly
 				if raw_arg == usage:

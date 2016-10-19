@@ -19,6 +19,13 @@ def is_int(s):
 	except ValueError:
 		return False
 
+def is_float(s):
+	try:
+		float(s)
+		return True
+	except ValueError:
+		return False
+
 def is_mention(s:str):
 	return s.startswith('<@') and s.endswith('>')
 

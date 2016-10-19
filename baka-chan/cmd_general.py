@@ -109,22 +109,23 @@ async def cmd_choose(message, *args):
 		choice = choices[random.randint(0, len(choices) - 1)]
 		await send_message(message.channel, 'I pick **{0}**.'.format(choice))
 
-@Helptext('Have Baka-chan calculate something for you.', '<Number 1> <Operator> <Number 2>')
-@Command('calc')
-async def cmd_calc(message, args):
-	if len(args) <= 2:
-		await send_message(message.channel, 'baka')
+@Command('calc', help = 'Have Baka-chan calculate something for you.', usage = ('<number 1:float>','<operator:str>','<number 2:float>'))
+async def cmd_calc(message, number1, operator, number2):
+	if operator == '+':
+		result = number1 + number2
+	elif operator == '-':
+		result = number1 - number2
+	elif operator == '*':
+		result = number1 * number2
+	elif operator == '/':
+		result = number1 / number2
 	else:
-		num1 = float(args[2])
-		num2 = float(args[4])
-		operator = args[3]
-		result = str(num1 operator num2)
-		await send_message(message.channel, result)
+		raise ArgumentParseException()
+	await send_message(message.channel, '{0} {1} {2} = {3}'.format(number1, operator, number2, result))
 
 @Command('poke', help = 'Have Baka-chan poke you or another user.', usage = (('optional','<@user>'),))
 async def cmd_poke(message, mention):
 	if mention == None:
->>>>>>> origin/master
 		poke = message.author.mention
 	else:
 		poke = mention.mention
