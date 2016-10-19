@@ -119,6 +119,8 @@ async def cmd_calc(message, number1, operator, number2):
 		result = number1 * number2
 	elif operator == '/':
 		result = number1 / number2
+	elif operator == '%':
+		result = number1 % number2
 	else:
 		raise ArgumentParseException()
 	await send_message(message.channel, '{0} {1} {2} = {3}'.format(number1, operator, number2, result))
