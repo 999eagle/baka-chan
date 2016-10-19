@@ -40,10 +40,10 @@ class StaticResponse:
 		self.response = args[0]
 	def __call__(self, func):
 		if self.type == 'image':
-			async def wrapper(message, args):
+			async def wrapper(message, *_):
 				await send_image(message.channel, self.response)
 		else:
-			async def wrapper(message, args):
+			async def wrapper(message, *_):
 				await send_message(message.channel, self.response)
 		return wrapper
 

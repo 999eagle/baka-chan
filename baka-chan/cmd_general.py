@@ -174,42 +174,85 @@ async def cmd_about(message):
 	text += '{0}h {1}min {2}s'.format(uptime_hours, uptime_min, uptime_sec)
 	await send_message(message.channel, text)
 
+@Command('8ball', help = 'Let me answer your question.', usage = ('*<question>',))
+async def cmd_8ball(message, *args):
+	await send_message(message.channel, texts_8ball[random.randint(0, len(texts_8ball) - 1)])
+
+
 @Command('boom')
 @StaticResponse('boom')
-async def cmd_boom(message, args): pass
+async def cmd_boom(): pass
 
 @Command('notwork')
 @StaticResponse('notwork')
-async def cmd_notwork(message, args): pass
+async def cmd_notwork(): pass
 
 @Command('trustme')
 @StaticResponse('trustme')
-async def cmd_trustme(message, args): pass
+async def cmd_trustme(): pass
 
 @Command('calmdown')
 @StaticResponse('calmdown')
-async def cmd_calmdown(message, args): pass
+async def cmd_calmdown(): pass
 
 @Command('cover_up')
 @StaticResponse('cover_up')
-async def cmd_cover_up(message, args): pass
+async def cmd_cover_up(): pass
 
 @Command('youaintkawaii')
 @StaticResponse('you_aint_kawaii')
-async def cmd_you_aint_kawaii(message, args): pass
+async def cmd_you_aint_kawaii(): pass
 
 @Command('thumbsup')
-async def cmd_thumbs_up(message, args):
+async def cmd_thumbs_up(message):
 	await send_random_image(message.channel, 'thumbs_up')
 
 @Command('fu')
-async def cmd_fu(message, args):
+async def cmd_fu(message):
 	await send_random_image(message.channel, 'fu')
 
 @Command('gtfo')
-async def cmd_gtfo(message, args):
+async def cmd_gtfo(message):
 	await send_random_image(message.channel, 'gtfo')
 
 @Command('wtf')
-async def cmd_wtf(message, args):
+async def cmd_wtf(message):
 	await send_random_image(message.channel, 'wtf')
+
+texts_8ball = (# standard answers
+               'It is certain.',
+               'It is decidedly so.',
+               'Without a doubt.',
+               'Yes, definitely.',
+               'You may rely on it.',
+               'As I see it, yes.',
+               'Most likely.',
+               'Outlook good.',
+               'Yes.',
+               'Signs point to yes.',
+               'Reply hazy try again.',
+               'Ask again later.',
+               'Better not tell you now.',
+               'Cannot predict now.',
+               'Concentrate and ask again.',
+               'Don\'t count on it.',
+               'My reply is no.',
+               'My sources say no.',
+               'Outlook not so good.',
+               'Very doubtful.',
+               # custom answers
+               'I think so.',
+               'My sources say yes.',
+               'My reply is yes.',
+               'Of course.',
+               'Yes... uhm, no... What was the question again?',
+               'That\'s a secret.',
+               'Ask someone who cares.',
+               'I\'ll answer you if you give me some cake.',
+               'Do you really want to know?',
+               'Lame question. Next!',
+               'Don\'t ask me, I\'m just a random number generator.',
+               'Not without your daddy\'s wallet.',
+               'You\'d be better off just going to school.',
+               'Yeah and I\'m the pope.',
+               )
