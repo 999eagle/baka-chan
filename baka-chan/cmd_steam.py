@@ -1,18 +1,14 @@
 import asyncio
 
 import globals
-from command import Command, Helptext
+from command import Command
 from util import *
 from errors import *
 
-@Helptext('Displays some information about a Steam user.','info <steamid>')
-@Command('steam')
-async def cmd_steam(message, args):
-	if len(args) != 2 or args[0] != 'info':
-		await send_message(message.channel, 'Usage: `{0}steam info <steamid>`'.format(globals.config.cmd_tag))
-		return
+@Command('steam', help = 'Displays some information about a Steam user.', usage = ('info','<steamid:str>'))
+async def cmd_steam(message, steamid):
 	try:
-		info = globals.api_steam.get_user_info(args[1])
+		info = globals.api_steam.get_user_info(steamid)
 	except SteamDataException as e:
 		await send_message(message.channel, e.text)
 		return
@@ -29,47 +25,38 @@ async def cmd_steam(message, args):
 
 	await send_message(message.channel, text)
 
-@Helptext('Displays a summary of the CS:GO stats of a player or a random single stat about that player.','stats <steamid> [r]')
-@Command('csgo')
-async def cmd_csgo(message, args):
-	if len(args) == 0:
-		await send_message(message.channel, 'Usage: `{0}csgo stats <steamid>`'.format(globals.config.cmd_tag))
+@Command('csgo', help = 'Displays a summary of the CS:GO stats of a player or a random single stat about that player.', usage = ('stats','<steamid:str>',('optional','r')))
+async def cmd_csgo(message, steamid, r):
+	try:
+		stats = globals.api_steam.get_user_stats_730(steamid)
+	except SteamDataException as e:
+		await send_message(message.channel, e.text)
 		return
 
-	if args[0] == 'stats':
-		if len(args) == 1:
-			await send_message(message.channel, 'Usage: `{0}csgo stats <steamid> [r]`'.format(globals.config.cmd_tag))
-			return
-		try:
-			stats = globals.api_steam.get_user_stats_730(args[1])
-		except SteamDataException as e:
-			await send_message(message.channel, e.args[0])
-			return
-
-		if len(args) >= 3 and args[2] == 'r':
-			# display a random stat
-			randstat = None
-			max = len(stats) - 1
-			while randstat == None:
-				randstat = stats[random.randint(0, max)]
-				if not randstat['name'] in csgo_randomstattexts:
-					randstat = None
-			value = randstat['value']
-			if randstat['name'] == 'total_time_played':
-				sec = value % 60
-				value = (value - sec) / 60
-				min = value % 60
-				value = (value - min) / 60
-				hour = value % 24
-				days = (value - hour) / 24
-				value = '{0}d {1}h {2}min'.format(int(days), int(hour), int(min))
-			await send_message(message.channel, args[1] + ' ' + csgo_randomstattexts[randstat['name']].format(value))
-		else:
-			# display a summary
-			stats = cmd_csgo_usefulstats(stats)
-			text = '**Total stats**\nKills: {0}, Deaths: {1}, K/D: {2:.2f}, Headshots: {3}, Accuracy: {4:.2f}%, MVPs: {5}, Bombs defused: {6}, Bombs planted: {7}\n\n**Last match**\nKills: {8}, Deaths: {9}, K/D: {10:.2f}, MVPs: {11}, Favourite weapon: {12}'
-			text = text.format(stats['tkill'], stats['tdeath'], stats['tkd'], stats['theadshot'], stats['taccuracy'] * 100, stats['tmvp'], stats['tbombd'], stats['tbombp'], stats['lmkill'], stats['lmdeath'], stats['lmkd'], stats['lmmvp'], stats['lmfavweapon'])
-			await send_message(message.channel, text)
+	if r == True:
+		# display a random stat
+		randstat = None
+		max = len(stats) - 1
+		while randstat == None:
+			randstat = stats[random.randint(0, max)]
+			if not randstat['name'] in csgo_randomstattexts:
+				randstat = None
+		value = randstat['value']
+		if randstat['name'] == 'total_time_played':
+			sec = value % 60
+			value = (value - sec) / 60
+			min = value % 60
+			value = (value - min) / 60
+			hour = value % 24
+			days = (value - hour) / 24
+			value = '{0}d {1}h {2}min'.format(int(days), int(hour), int(min))
+		await send_message(message.channel, steamid + ' ' + csgo_randomstattexts[randstat['name']].format(value))
+	else:
+		# display a summary
+		stats = cmd_csgo_usefulstats(stats)
+		text = '**Total stats**\nKills: {0}, Deaths: {1}, K/D: {2:.2f}, Headshots: {3}, Accuracy: {4:.2f}%, MVPs: {5}, Bombs defused: {6}, Bombs planted: {7}\n\n**Last match**\nKills: {8}, Deaths: {9}, K/D: {10:.2f}, MVPs: {11}, Favourite weapon: {12}'
+		text = text.format(stats['tkill'], stats['tdeath'], stats['tkd'], stats['theadshot'], stats['taccuracy'] * 100, stats['tmvp'], stats['tbombd'], stats['tbombp'], stats['lmkill'], stats['lmdeath'], stats['lmkd'], stats['lmmvp'], stats['lmfavweapon'])
+		await send_message(message.channel, text)
 
 # source: https://tf2b.com/itemlist.php?gid=730
 csgo_weapons = ('','Desert Eagle','Dual Berettas','Five-SeveN','Glock-18','','','AK-47','AUG','AWP',

@@ -175,15 +175,17 @@ class DataPermissions(Data):
 		kick = 64
 		mute = 128
 		purge = 256
-	all_perms = { 'coins_spawn':      Permission.coins_spawn,
-	              'coins_despawn':    Permission.coins_despawn,
-	              'strike':           Permission.strike,
-	              'edit_permissions': Permission.edit_permissions,
-	              'settings':         Permission.settings,
-	              'ban':              Permission.ban,
-	              'kick':             Permission.kick,
-	              'mute':             Permission.mute,
-	              'purge':            Permission.purge}
+		display_permissions = 512
+	all_perms = { 'coins_spawn':         Permission.coins_spawn,
+	              'coins_despawn':       Permission.coins_despawn,
+	              'strike':              Permission.strike,
+	              'edit_permissions':    Permission.edit_permissions,
+	              'display_permissions': Permission.display_permissions,
+	              'settings':            Permission.settings,
+	              'ban':                 Permission.ban,
+	              'kick':                Permission.kick,
+	              'mute':                Permission.mute,
+	              'purge':               Permission.purge}
 	
 	def __init__(self):
 		super(DataPermissions, self).__init__('settings.json')

@@ -1,6 +1,6 @@
 import asyncio
 
-from command import Command, Helptext
+from command import Command
 import globals
 from util import *
 
@@ -18,14 +18,14 @@ class Rps:
 
 	def start_game(self, server, player1, player2, bet, is_rpsls):
 		if globals.data_coins.getcoins(server, player1) < bet:
-			return (False, '<@{1}> only has {2} {0}')
+			return (False, '{1} only has {2} {0}')
 		if globals.data_coins.getcoins(server, player2) < bet:
-			return (False, '<@{3}> only has {4} {0}')
+			return (False, '{3} only has {4} {0}')
 		for game in self.active_games:
 			if game.p1 == player1 or game.p2 == player1:
-				return (False, '<@{1}> is already in a game of rock-paper-scissors')
+				return (False, '{1} is already in a game of rock-paper-scissors')
 			if game.p1 == player2 or game.p2 == player2:
-				return (False, '<@{3}> is already in a game of rock-paper-scissors')
+				return (False, '{3} is already in a game of rock-paper-scissors')
 		game = RpsGame(server, player1, player2, bet, is_rpsls)
 		self.active_games.append(game)
 		asyncio.ensure_future(self.game_timeout(game))
@@ -77,51 +77,50 @@ class RpsGame:
 		else:
 			return 2 # player2
 
-@Helptext('Challenge a user to a game of rock-paper-scissors. The winner gets the bet.','<@user> <bet>' + (' [rpsls]' if globals.config.rps_allow_rpsls else ''))
-@Command('rps')
-async def cmd_rps(message, args):
+@Command('rps', help = 'Challenge a user to a game of rock-paper-scissors. The winner gets the bet.', usage = ('<@user>','<bet:int>',('optional','rpsls')))
+async def cmd_rps(message, mention, bet, rpsls):
 	server = message.server.id
 	rps = Rps.instance()
 	player1_id = message.author.id
-	if len(args) in (2, 3) and is_int(args[1]) and is_usermention(args[0]):
-		player2_id = get_id_from_mention(args[0])
-		if player1_id == player2_id:
-			await send_message(message.channel, 'You can\'t challenge yourself to a game of rock-paper-scissors.')
-			return
-		bet = int(args[1])
-		if bet <= 0:
-			await send_message(message.channel, 'You have to bet at least 1 {0}'.format(globals.config.currency_name))
-			return
+	player2_id = mention.id
+	if player1_id == player2_id:
+		await send_message(message.channel, 'You can\'t challenge yourself to a game of rock-paper-scissors.')
+		return
+	if bet <= 0:
+		await send_message(message.channel, 'You have to bet at least 1 {0}'.format(globals.config.currency_name))
+		return
+	if rpsls == None:
 		rpsls = False
-		if globals.config.rps_allow_rpsls and len(args) == 3 and args[2] == 'rpsls':
-			rpsls = True
-		result = rps.start_game(server, player1_id, player2_id, bet, rpsls)
-		if result[0] == False:
-			await send_message(message.channel, result[1].format(globals.config.currency_name, player1_id, globals.data_coins.getcoins(server, player1_id), player2_id, globals.data_coins.getcoins(server, player2_id)))
-		else:
-			result[1].channel = message.channel
-			await send_message(message.channel, '<@{0}>, you have been challenged to a game of rock-paper-scissors. You can accept in the next {2} seconds with `{1}rps a`.'.format(player2_id, globals.config.cmd_tag, str(globals.config.rps_timeout)))
-	elif len(args) == 1 and args[0] == 'a':
-		game = rps.get_activegame(player1_id)
-		if game == None:
-			await send_message(message.channel, '<@{0}>, you have not been challenged to a game of rock-paper-scissors.'.format(player1_id))
-		elif game.status != 0:
-			await send_message(message.channel, 'This game is already running.')
-		elif game.p1 == player1_id:
-			await send_message(message.channel, '<@{0}>, you started this game yourself, you don\'t have to accept.'.format(player1_id))
-		else:
-			game.status = 1 # player2 accepted
-			if game.is_rpsls:
-				option_text = '"rock", "paper", "scissors", "lizard" or "spock"'
-				options = ('rock', 'paper', 'scissors', 'lizard', 'spock')
-			else:
-				option_text = '"rock", "paper" or "scissors"'
-				options = ('rock','paper','scissors')
-			await send_message(game.channel, '<@{0}>, you accepted <@{1}>\'s challenge. Both please DM me your choices. No special tag is needed, just send me {2}.'.format(player1_id, game.p1, option_text))
-			asyncio.ensure_future(cmd_rps_continue(game, 1, options))
-			asyncio.ensure_future(cmd_rps_continue(game, 2, options))
+	result = rps.start_game(server, player1_id, player2_id, bet, rpsls)
+	if result[0] == False:
+		await send_message(message.channel, result[1].format(globals.config.currency_name, message.author.mention, globals.data_coins.getcoins(server, player1_id), mention.mention, globals.data_coins.getcoins(server, player2_id)))
 	else:
-		await send_message(message.channel, 'Usage: `{1}rps <@user> <{0}>`'.format(globals.config.currency_name, globals.config.cmd_tag))
+		result[1].channel = message.channel
+		await send_message(message.channel, '{0}, you have been challenged to a game of rock-paper-scissors. You can accept in the next {2} seconds with `{1}rps a`.'.format(mention.mention, globals.config.cmd_tag, globals.config.rps_timeout))
+
+@Command('rps', usage = ('a',))
+async def cmd_rps_accept(message):
+	server = message.server.id
+	rps = Rps.instance()
+	player_id = message.author.id
+	game = rps.get_activegame(player_id)
+	if game == None:
+		await send_message(message.channel, '{0}, you have not been challenged to a game of rock-paper-scissors.'.format(message.author.mention))
+	elif game.status != 0:
+		await send_message(message.channel, 'This game is already running.')
+	elif game.p1 == player_id:
+		await send_message(message.channel, '{0}, you started this game yourself, you don\'t have to accept.'.format(message.author.mention))
+	else:
+		game.status = 1 # player2 accepted
+		if game.is_rpsls:
+			option_text = '"rock", "paper", "scissors", "lizard" or "spock"'
+			options = ('rock', 'paper', 'scissors', 'lizard', 'spock')
+		else:
+			option_text = '"rock", "paper" or "scissors"'
+			options = ('rock','paper','scissors')
+		await send_message(game.channel, '{0}, you accepted <@{1}>\'s challenge. Both please DM me your choices. No special tag is needed, just send me {2}.'.format(message.author.mention, game.p1, option_text))
+		asyncio.ensure_future(cmd_rps_continue(game, 1, options))
+		asyncio.ensure_future(cmd_rps_continue(game, 2, options))
 
 async def cmd_rps_continue(game, player_idx, options:list):
 	if player_idx == 1:
