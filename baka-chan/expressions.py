@@ -1,3 +1,5 @@
+﻿# -*- coding: utf-8 -*-
+
 from enum import Enum
 import math
 
@@ -196,6 +198,8 @@ class Expression:
 		'*': {'arity': 2, 'precedence': 2, 'associativity': Associativity.left},
 		'/': {'arity': 2, 'precedence': 2, 'associativity': Associativity.left},
 		'^': {'arity': 2, 'precedence': 3, 'associativity': Associativity.right},
+		# unary operators
+		'°': {'arity': 1, 'precedence': 4, 'associativity': Associativity.left},
 		# binary functions
 		'max': {'arity': 2},
 		'min': {'arity': 2},
@@ -207,8 +211,13 @@ class Expression:
 		'sqrt': {'arity': 1},
 		'tan': {'arity': 1},
 		'abs': {'arity': 1},
+		'asin': {'arity': 1},
+		'acos': {'arity': 1},
+		'atan': {'arity': 1},
+		'deg': {'arity': 1},
 		# constants
 		'tau': {'arity': 0, 'value': 6.2831853071795864769252867 },
+		'e': {'arity': 0, 'value': 2.7182818284590452353602874 },
 	}
 
 	_calc = {
@@ -217,6 +226,7 @@ class Expression:
 		'*': (lambda a, b: a * b),
 		'/': (lambda a, b: a / b),
 		'^': (lambda a, b: a ** b),
+		'°': (lambda a: a / 360 * 6.2831853071795864769252867),
 		'max': max,
 		'min': min,
 		'exp': math.exp,
@@ -226,4 +236,8 @@ class Expression:
 		'sqrt': math.sqrt,
 		'tan': math.tan,
 		'abs': math.fabs,
+		'asin': math.asin,
+		'acos': math.acos,
+		'atan': math.atan,
+		'deg': math.degrees,
 	}
