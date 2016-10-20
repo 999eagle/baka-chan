@@ -20,3 +20,9 @@ class SteamDataException(BakaException):
 
 class ArgumentParseException(BakaException):
 	pass
+
+class VariableOutOfRangeException(BakaException):
+	pass
+
+class MalformedExpressionException(BakaException):
+	pass

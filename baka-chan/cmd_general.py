@@ -8,6 +8,7 @@ from command import Command, StaticResponse
 import globals
 from util import *
 from errors import *
+from expressions import Expression
 
 @Command('help', help = 'Shows this help.', allow_private = True)
 async def cmd_help(message):
@@ -109,21 +110,15 @@ async def cmd_choose(message, *args):
 		choice = choices[random.randint(0, len(choices) - 1)]
 		await send_message(message.channel, 'I pick **{0}**.'.format(choice))
 
-@Command('calc', help = 'Have Baka-chan calculate something for you.', usage = ('<number 1:float>','<operator:str>','<number 2:float>'))
-async def cmd_calc(message, number1, operator, number2):
-	if operator == '+':
-		result = number1 + number2
-	elif operator == '-':
-		result = number1 - number2
-	elif operator == '*':
-		result = number1 * number2
-	elif operator == '/':
-		result = number1 / number2
-	elif operator == '%':
-		result = number1 % number2
-	else:
-		raise ArgumentParseException()
-	await send_message(message.channel, '{0} {1} {2} = {3}'.format(number1, operator, number2, result))
+@Command('calc', help = 'Have Baka-chan calculate something for you.', usage = ('*<expression>',))
+async def cmd_calc(message, *args):
+	expr_str = ' '.join(args)
+	expr = Expression(expr_str)
+	try:
+		value = expr.eval()
+		await send_message(message.channel, '{0}'.format(value))
+	except (MalformedExpressionException, VariableOutOfRangeException) as e:
+		await send_message(message.channel, e.text)
 
 @Command('poke', help = 'Have Baka-chan poke you or another user.', usage = (('optional','<@user>'),))
 async def cmd_poke(message, mention):
