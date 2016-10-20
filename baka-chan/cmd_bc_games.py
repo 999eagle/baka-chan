@@ -9,8 +9,14 @@ from util import *
 
 @Command(globals.config.currency_cmd, 'bc', help = 'Shows how many {0} you have or another user has.'.format(globals.config.currency_name), usage = (('optional','<@user>'),))
 async def cmd_coins_display(message, mention):
-	coins = str(globals.data_coins.getcoins(message.server.id, mention.id))
-	await send_message(message.channel, '{1} has {2} {0}'.format(globals.config.currency_name, mention.mention, points))
+	if mention == None:
+		user_id = message.author.id
+		user_mention = message.author.mention
+	else:
+		user_id = mention.id
+		user_mention = mention.mention
+	coins = str(globals.data_coins.getcoins(message.server.id, user_id))
+	await send_message(message.channel, '{1} has {2} {0}'.format(globals.config.currency_name, user_mention, coins))
 
 @Command(globals.config.currency_cmd, 'bc', help = 'Gives your own {0} to another user.'.format(globals.config.currency_name), usage = ('give','<@user>','<amount:int>'))
 async def cmd_coins_give(message, mention, amount):

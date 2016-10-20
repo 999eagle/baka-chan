@@ -120,6 +120,8 @@ class Expression:
 					stack.append(token)
 				elif token['token'] == ')':
 					while True:
+						if len(stack) == 0:
+							raise MalformedExpressionException('Unmatched right parenthesis encountered.')
 						t = stack.pop()
 						if t['token'] == '(':
 							break
@@ -131,9 +133,10 @@ class Expression:
 							rpn_tokens.append(t)
 				elif token['token'] == ',':
 					while True:
-						t = stack.pop()
+						t = stack[-1]
 						if t['token'] == '(':
 							break
+						stack.pop()
 						rpn_tokens.append(t)
 				else:
 					if token['token'] in Expression._operators:
@@ -158,7 +161,10 @@ class Expression:
 						# token is unknown "operator" i.e. text --> named variable
 						rpn_tokens.append({'type': TokenType.variable, 'token': token['token']})
 		while len(stack) > 0:
-			rpn_tokens.append(stack.pop())
+			t = stack.pop()
+			if t['token'] == '(':
+				raise MalformedExpressionException('Unmatched left parenthesis encountered.')
+			rpn_tokens.append(t)
 		self.rpn_tokens = rpn_tokens
 
 	def eval(self, *pos_vars, **named_vars):
