@@ -144,7 +144,7 @@ async def cmd_rps_continue(game, player_idx, options:list):
 		winner = game.get_winner()
 		message = ''
 		if winner == 0:
-			message = 'both of you chose ' + game.p1_text + '. That\'s a tie.'
+			message = 'Both of you chose ' + game.p1_text + '. That\'s a tie.'
 		else:
 			message = '<@{0}> chose {1}, <@{2}> chose {3}. '.format(game.p1, game.p1_text, game.p2, game.p2_text)
 			if winner == 1:
