@@ -149,11 +149,11 @@ async def cmd_invite(message):
 	await send_message(message.channel, 'If you want to invite me to your server, use this link: https://discordapp.com/oauth2/authorize?client_id={0}&scope=bot.'.format(globals.client.user.id))
 
 @Command('f', help = 'Pay respects.')
-async def cmd_f(message, args):
+async def cmd_f(message):
 	await send_image(message.channel, 'pay_respects')
 
 @Command('lewd', help = 'Shows an image with "lewd".')
-async def cmd_lewd(message, args):
+async def cmd_lewd(message):
 	await send_image(message.channel, 'lewd')
 
 @Command('about', help = 'Show information about me.', allow_private = True)

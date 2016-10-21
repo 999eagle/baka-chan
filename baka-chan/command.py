@@ -170,6 +170,7 @@ class CommandWrapper:
 					if isinstance(argument, str) and argument.startswith('*'):
 						for a in raw_args[index:]:
 							parsed_args.append(a)
+						index = len(raw_args)
 						break
 					if len(raw_args) <= index:
 						if is_optional:
@@ -185,6 +186,8 @@ class CommandWrapper:
 							parsed_args.append(parse.result)
 					if parse.matched_arg:
 						index += 1
+			if index < len(raw_args):
+				raise ArgumentParseException()
 			if sender_has_permission(message, self.permission):
 				await self.func(message, *parsed_args)
 			else:
