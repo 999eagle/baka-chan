@@ -77,7 +77,7 @@ async def cmd_leaderboard(message):
 		await send_message(message.channel, text)
 
 @Command('slots', help = 'Play a round of slots.', usage = ('<bet:int>',))
-async def cmd_slots(message, args):
+async def cmd_slots(message, bet):
 	server = message.server.id
 	if bet <= 0:
 		await send_message(message.channel, 'You have to bet at least 1 {0}'.format(globals.config.currency_name))
@@ -100,7 +100,7 @@ async def cmd_slots(message, args):
 			number = random.randint(0, slot_max)
 			text += slots_items[number] + ' '
 			numbers[number] += 1
-		text += '\n' + user + ', '
+		text += '\n' + message.author.mention + ', '
 		highest = 0
 		bonus = 0
 		bonustext = ''
