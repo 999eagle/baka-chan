@@ -57,7 +57,7 @@ async def on_message(message):
 						await send_message(message.channel, 'Unknown command `{0}`. Type `{1}help`, to get a list with commands.'.format(split[1], tag))
 		elif private and is_dev:
 			await cmd_dev(message, split)
-		else:
+		elif globals.config.enable_songs:
 			await songs.try_sing(message)
 	except:
 		text = traceback.format_exc()

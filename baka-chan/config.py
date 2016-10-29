@@ -30,6 +30,8 @@ class Config(object):
 			raise InvalidConfigException('Key "currency_name" in section "[General]" is missing.')
 		if 'currency_cmd' not in sect_general:
 			raise InvalidConfigException('Key "currency_cmd" in section "[General]" is missing.')
+		if 'enable_songs' not in sect_general: raise InvalidConfigException('Key "enable_songs" in section "[General]" is missing.')
+		if sect_general['enable_songs'].lower() not in ('true','false'): raise InvalidConfigException('Key "enable_songs" in section "[General]" must be one of "true","false".')
 		#
 		# Validate section [Discord]
 		#
@@ -111,6 +113,11 @@ class Config(object):
 		return self.parser['General']['currency_cmd']
 
 	@property
+	def enable_songs(self) -> bool:
+		if not self.loaded: raise ConfigNotLoadedException()
+		return self.parser['General']['enable_songs'].lower() == 'true'
+
+	@property
 	def slots_count(self) -> int:
 		if not self.loaded:
 			raise ConfigNotLoadedException()
@@ -143,7 +150,7 @@ class Config(object):
 	@property
 	def rps_allow_rpsls(self) -> bool:
 		if not self.loaded: raise ConfigNotLoadedException()
-		return bool(self.parser['Games']['rps_allow_rpsls'])
+		return self.parser['Games']['rps_allow_rpsls'].lower() == 'true'
 
 	@property
 	def steam_api_key(self) -> str:
