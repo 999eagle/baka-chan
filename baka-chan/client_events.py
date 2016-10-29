@@ -7,6 +7,7 @@ import commands
 from command import Command
 from util import *
 from cmd_dev import cmd_dev
+import songs
 
 @globals.client.event
 async def on_ready():
@@ -56,21 +57,8 @@ async def on_message(message):
 						await send_message(message.channel, 'Unknown command `{0}`. Type `{1}help`, to get a list with commands.'.format(split[1], tag))
 		elif private and is_dev:
 			await cmd_dev(message, split)
-		#else:
-		#	def normalize_lyrics(l: str):
-		#		s = l.lower().rstrip(' !.?')
-		#		s = s.replace(',','').replace('\'','')
-		#		return s
-		#	matched = False
-		#	for s in g.songs:
-		#		for t in s:
-		#			if matched:
-		#				await send_message(message.channel, t + ':notes:')
-		#				break
-		#			if normalize_lyrics(content).endswith(normalize_lyrics(t)):
-		#				matched = True
-		#		if matched:
-		#			break
+		else:
+			await songs.try_sing(message)
 	except:
 		text = traceback.format_exc()
 		log.log_error(text)
