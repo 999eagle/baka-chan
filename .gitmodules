@@ -1,0 +1,3 @@
+[submodule "baka-chan/steamwebapi"]
+	path = baka-chan/steamwebapi
+	url = https://github.com/999eagle/steamwebapi.git

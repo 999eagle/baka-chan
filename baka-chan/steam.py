@@ -1,12 +1,12 @@
 import datetime
 import json
-import steamwebapi, steamwebapi.api
+import steamwebapi.steamwebapi.api as steamwebapi
 
 import globals
 from errors import *
 from util import *
 
-class IEconItems_730(steamwebapi.api._SteamWebAPI):
+class IEconItems_730(steamwebapi._SteamWebAPI):
 	def __init__(self,**kwargs):
 		self.interface = 'IEconItems_730'
 		super(IEconItems_730, self).__init__(**kwargs)
@@ -37,8 +37,8 @@ class Steam:
 		self.cache_userinventory_730 = {}
 
 	def load_api(self):
-		self.api_userstats = steamwebapi.api.ISteamUserStats(steam_api_key=globals.config.steam_api_key)
-		self.api_user = steamwebapi.api.ISteamUser(steam_api_key=globals.config.steam_api_key)
+		self.api_userstats = steamwebapi.ISteamUserStats(steam_api_key=globals.config.steam_api_key)
+		self.api_user = steamwebapi.ISteamUser(steam_api_key=globals.config.steam_api_key)
 		self.api_econitems730 = IEconItems_730(steam_api_key=globals.config.steam_api_key)
 
 	def _getcachedata(self, cache, key):
