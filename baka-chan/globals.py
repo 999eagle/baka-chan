@@ -5,7 +5,10 @@ from discord import Client
 from data import *
 from steam import Steam
 
-version_str = 'v0.4'
+version_major = 0
+version_minor = 4
+version_patch = 1
+version_str = 'v{0}.{1}.{2}'.format(version_major, version_minor, version_patch)
 dev_id = '111563848405798912'
 running_in_foreground = False
 disabled = False

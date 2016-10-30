@@ -61,10 +61,14 @@ class Config(object):
 		#
 		# Validate section [API]
 		#
-		if 'API' not in self.parser: raise InvalidConfigException('Section "[API]" is missing.')
-		sect_api = self.parser['API']
-		# Validate Steam API config
-		if 'steam_api_key' not in sect_api: raise InvalidConfigException('Key "steam_api_key" in section "[API]" is missing.')
+		if 'API' not in self.parser:
+			log.log_warning('Configuration: Section "[API]" is missing. Some commands will not work.')
+			# add empty section so that the properties don't have to check for this section later
+			self.parser['API'] = {}
+		else:
+			sect_api = self.parser['API']
+			# Validate Steam API config
+			if 'steam_api_key' not in sect_api: log.log_warning('Configuration: Key "steam_api_key" in section "[API]" is missing. Steam commands will not work.')
 
 		self.loaded = True
 
@@ -151,6 +155,11 @@ class Config(object):
 	def rps_allow_rpsls(self) -> bool:
 		if not self.loaded: raise ConfigNotLoadedException()
 		return self.parser['Games']['rps_allow_rpsls'].lower() == 'true'
+
+	@property
+	def has_steam_api_key(self) -> str:
+		if not self.loaded: raise ConfigNotLoadedException()
+		return 'steam_api_key' in self.parser['API']
 
 	@property
 	def steam_api_key(self) -> str:
