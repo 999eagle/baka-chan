@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.5
 #
 # Baka-chan v0.4
 # main entry point
@@ -15,7 +16,7 @@ import config
 from errors import *
 from platform_specific import PlatformSpecific
 
-def sigterm_received():
+def sigterm_received(signum, frame):
 	log.log_debug('Received SIGTERM')
 	if globals.client.is_logged_in:
 		asyncio.ensure_future(globals.client.logout())
