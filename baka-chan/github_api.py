@@ -49,16 +49,21 @@ class GitHubAPI:
 			os.mkdir(path)
 		return path
 
-	async def download_blob(self, repo_name, blob, destination):
+	async def _download_blob(self, repo_name, blob, file_mode, destination):
 		log.log_debug('GitHubAPI: Get blob {0} from repo {1}'.format(blob, repo_name))
 		blob_url = GitHubAPI.API_BLOB.format(repo_name = repo_name, blob = blob)
 		async with self.session.get(blob_url) as blob_resp:
-			log.log_debug('GitHubAPI: Saving blob {0} to {1}'.format(blob, destination))
+			blob_text = await blob_resp.text()
+			log.log_debug('GitHubAPI: Saving blob {0} to {1} with mode {2}'.format(blob, destination, file_mode[-3:]))
 			# sadly, blobs aren't returned as binary data, but instead wrapped in a json object encoded in base64
 			# thus we can't use any streams here
-			blob_json = json.loads(await blob_resp.text())
-			with open(destination, 'wb') as f:
-				f.write(base64.b64decode(blob_json['content']))
+			blob_json = json.loads(blob_text)
+		flags = os.O_WRONLY | os.O_CREAT
+		if os.name == 'nt':
+			flags |= os.O_BINARY
+		mode = int(file_mode[-3:], base = 8)
+		with os.fdopen(os.open(destination, flags, mode), 'wb') as f:
+			f.write(base64.b64decode(blob_json['content']))
 
 	async def download_tree(self, repo_name, tree, destination):
 		destination = self._check_path_dir(destination)
@@ -78,7 +83,7 @@ class GitHubAPI:
 				await self.download_tree(repo_name, item_sha, item_dest)
 			elif item['type'] == 'blob':
 				# download file blob
-				await self.download_blob(repo_name, item_sha, item_dest)
+				await self._download_blob(repo_name, item_sha, item['mode'], item_dest)
 				if item['path'] == '.gitmodules':
 					# parse .gitmodules file and save the data for returning
 					modules = self._parse_gitmodules(item_dest)

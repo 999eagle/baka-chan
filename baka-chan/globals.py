@@ -7,7 +7,7 @@ from steam import Steam
 
 version_major = 0
 version_minor = 5
-version_patch = 0
+version_patch = 1
 version_str = 'v{0}.{1}.{2}'.format(version_major, version_minor, version_patch)
 dev_id = '111563848405798912'
 running_in_foreground = False
