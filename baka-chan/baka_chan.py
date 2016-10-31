@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#! baka-env/bin/python3.5
 #
 # Baka-chan v0.4
 # main entry point
@@ -9,6 +9,7 @@ import traceback
 import discord, discord.opus
 import asyncio
 import datetime
+import sys
 
 import globals
 import log
@@ -18,6 +19,7 @@ from platform_specific import PlatformSpecific
 
 def sigterm_received(signum, frame):
 	log.log_debug('Received SIGTERM')
+	globals.restart_on_exit = False
 	if globals.client.is_logged_in:
 		asyncio.ensure_future(globals.client.logout())
 
@@ -113,3 +115,6 @@ if __name__ == '__main__':
 		text += traceback.format_exc()
 		log.log_error(text)
 		cleanup()
+
+	if globals.restart_on_exit:
+		os.execv(__file__, sys.argv)

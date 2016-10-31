@@ -2,6 +2,7 @@ import configparser, logging
 
 from errors import *
 from util import *
+import log
 
 class Config(object):
 	"""Manges the configuration for the bot."""
@@ -69,6 +70,17 @@ class Config(object):
 			sect_api = self.parser['API']
 			# Validate Steam API config
 			if 'steam_api_key' not in sect_api: log.log_warning('Configuration: Key "steam_api_key" in section "[API]" is missing. Steam commands will not work.')
+		#
+		# Validate section [Updater]
+		#
+		if 'Updater' not in self.parser:
+			log.log_warning('Configuration: Section "[Updater]" is missing. Updating from repo will not work.')
+		else:
+			sect_updater = self.parser['Updater']
+			# Validate GitHub login token
+			if 'github_login_token' not in sect_updater: raise InvalidConfigException('Key "github_login_token" in section "[Updater]" is missing.')
+			# Validate GitHub repo
+			if 'github_repo' not in sect_updater: raise InvalidConfigException('Key "github_repo" in section "[Updater]" is missing.')
 
 		self.loaded = True
 
@@ -165,3 +177,18 @@ class Config(object):
 	def steam_api_key(self) -> str:
 		if not self.loaded: raise ConfigNotLoadedException()
 		return self.parser['API']['steam_api_key']
+
+	@property
+	def has_updater_config(self) -> str:
+		if not self.loaded: raise ConfigNotLoadedException()
+		return 'Updater' in self.parser
+
+	@property
+	def github_login_token(self) -> str:
+		if not self.loaded: raise ConfigNotLoadedException()
+		return self.parser['Updater']['github_login_token']
+
+	@property
+	def github_repo(self) -> str:
+		if not self.loaded: raise ConfigNotLoadedException()
+		return self.parser['Updater']['github_repo']
