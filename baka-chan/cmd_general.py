@@ -217,6 +217,13 @@ async def cmd_gtfo(message):
 async def cmd_wtf(message):
 	await send_random_image(message.channel, 'wtf')
 
+@Command('reportbug', help = 'Found a bug? Please report it with this command!', usage = ('*<bug description>',))
+async def cmd_bug(message, *args):
+	if len(args) == 0:
+		raise ArgumentParseException()
+	else:
+		await send_message(message.channel, 'That\'s not a bug! That\'s a FEATURE! \n*On a serious note:* We are working on this command. Until we have it working, please send **The999eagle#6302** or **Lukas#5183** a description of the bug you found. Thank you!')
+
 texts_8ball = (# standard answers
                'It is certain.',
                'It is decidedly so.',
