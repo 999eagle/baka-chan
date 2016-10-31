@@ -18,6 +18,7 @@ class GitHubAPI:
 	API_TREE = API_REPO + '/git/trees/{tree}'
 	API_COMMIT = API_REPO + '/commits/{commit}'
 	API_BLOB = API_REPO + '/git/blobs/{blob}'
+	API_ISSUES = API_REPO + '/issues'
 
 	def __init__(self, loop = None):
 		if loop == None:
@@ -131,3 +132,13 @@ class GitHubAPI:
 			sect = parser[sect_name]
 			modules.append({'path': sect['path'], 'repo': url_pattern.search(sect['url']).group('repo')})
 		return modules
+
+	async def create_issue(self, repo_name, title, body):
+		log.log_debug('GitHubAPI: Creating new issue in repo {0}'.format(repo_name))
+		issue_url = GitHubAPI.API_ISSUES.format(repo_name = repo_name)
+		issue_post_data = { 'title': title, 'body': body }
+		async with self.session.post(issue_url, data = json.dumps(issue_post_data)) as issue_post_resp:
+			issue_text = await issue_post_resp.text()
+			log.log_debug('GitHubAPI: Create issue returned {0}'.format(issue_text))
+			issue_json = json.loads(issue_text)
+		return issue_json['html_url']

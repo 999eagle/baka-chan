@@ -9,6 +9,7 @@ import globals
 from util import *
 from errors import *
 from expressions import Expression
+from github_api import GitHubAPI
 
 @Command('help', help = 'Shows this help.', allow_private = True)
 async def cmd_help(message):
@@ -221,8 +222,28 @@ async def cmd_wtf(message):
 async def cmd_bug(message, *args):
 	if len(args) == 0:
 		raise ArgumentParseException()
-	else:
-		await send_message(message.channel, 'That\'s not a bug! That\'s a FEATURE! \n*On a serious note:* We are working on this command. Until we have it working, please send **The999eagle#6302** or **Lukas#5183** a description of the bug you found. Thank you!')
+	text = ' '.join(args)
+	meta =  'Reported by {0.id} ({0.name}#{0.discriminator})\n'.format(message.author)
+	meta += 'Reported in {0.id}@{1.id} ({0.name}@{1.name})\n'.format(message.channel, message.server)
+
+	text += '\n' + meta
+	try:
+		if globals.config.has_updater_config:
+			with GitHubAPI(globals.client.loop) as gh:
+				lines = text.splitlines()
+				title = lines[0]
+				body = '\n'.join(lines[1:]) if len(lines) > 1 else ''
+				url = await gh.create_issue(globals.config.github_repo, 'Autoreport: ' + title, body)
+				await send_message(message.channel, 'Your bug was reported as issue on GitHub. You can view it here: {0}'.format(url))
+		else:
+			await send_message(discord.User(id = globals.dev_id), 'Bug report: {0}'.format(text))
+			await send_message(message.channel, 'Your bug was reported to the developers.')
+	except:
+		await send_message(discord.User(id = globals.dev_id), 'Bug couldn\'t be reported on GitHub. Report: {0}'.format(text))
+		await send_message(message.channel, 'Your bug was reported to the developers.')
+		log.log_error('Couldn\'t create GitHub issue.')
+		# reraise to use default exception handler
+		raise
 
 texts_8ball = (# standard answers
                'It is certain.',
