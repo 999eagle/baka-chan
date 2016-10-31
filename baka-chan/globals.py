@@ -19,6 +19,7 @@ data_strikes = DataStrikes()
 data_settings = DataSettings()
 data_permissions = DataPermissions()
 api_steam = Steam()
+restart_on_exit = False
 
 message_no_permission = 'You don\'t have the permission to do that.'
 

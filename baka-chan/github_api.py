@@ -20,7 +20,7 @@ class GitHubAPI:
 	API_BLOB = API_REPO + '/git/blobs/{blob}'
 
 	def __init__(self, loop = None):
-		if self.loop == None:
+		if loop == None:
 			self.loop = asyncio.get_event_loop()
 			self.own_loop = True
 		else:
@@ -48,9 +48,9 @@ class GitHubAPI:
 			os.mkdir(path)
 		return path
 
-	async def _download_blob(self, repo_name, blob, destination):
+	async def download_blob(self, repo_name, blob, destination):
 		log.log_debug('GitHubAPI: Get blob {0} from repo {1}'.format(blob, repo_name))
-		blob_url = Updater.API_BLOB.format(repo_name = repo_name, blob = blob)
+		blob_url = GitHubAPI.API_BLOB.format(repo_name = repo_name, blob = blob)
 		async with self.session.get(blob_url) as blob_resp:
 			log.log_debug('GitHubAPI: Saving blob {0} to {1}'.format(blob, destination))
 			# sadly, blobs aren't returned as binary data, but instead wrapped in a json object encoded in base64
@@ -59,10 +59,10 @@ class GitHubAPI:
 			with open(destination, 'wb') as f:
 				f.write(base64.b64decode(blob_json['content']))
 
-	async def _download_tree(self, repo_name, tree, destination):
+	async def download_tree(self, repo_name, tree, destination):
 		destination = self._check_path_dir(destination)
 		log.log_debug('GitHubAPI: Get tree {0} from repo {1}'.format(tree, repo_name))
-		tree_url = Updater.API_TREE.format(repo_name = repo_name, tree = tree)
+		tree_url = GitHubAPI.API_TREE.format(repo_name = repo_name, tree = tree)
 		async with self.session.get(tree_url) as tree_resp:
 			tree_text = await tree_resp.text()
 			log.log_debug('GitHubAPI: Get tree {0} returned {1}'.format(tree, tree_text))
@@ -74,10 +74,10 @@ class GitHubAPI:
 			item_sha = item['sha']
 			if item['type'] == 'tree':
 				# download subtree
-				await self._download_tree(repo_name, item_sha, item_dest)
+				await self.download_tree(repo_name, item_sha, item_dest)
 			elif item['type'] == 'blob':
 				# download file blob
-				await self._download_blob(repo_name, item_sha, item_dest)
+				await self.download_blob(repo_name, item_sha, item_dest)
 				if item['path'] == '.gitmodules':
 					# parse .gitmodules file and save the data for returning
 					modules = self._parse_gitmodules(item_dest)
@@ -87,17 +87,17 @@ class GitHubAPI:
 					f.write(item['sha'])
 		return modules
 
-	async def _download_commit(self, repo_name, commit, destination):
+	async def download_commit(self, repo_name, commit, destination):
 		destination = self._check_path_dir(destination)
 		log.log_debug('GitHubAPI: Get commit {0} from repo {1}'.format(commit, repo_name))
-		commit_url = Updater.API_COMMIT.format(repo_name = repo_name, commit = commit)
+		commit_url = GitHubAPI.API_COMMIT.format(repo_name = repo_name, commit = commit)
 		async with self.session.get(commit_url) as commit_resp:
 			commit_text = await commit_resp.text()
 			log.log_debug('GitHubAPI: Get commit {0} returned {1}'.format(commit, commit_text))
 			commit_json = json.loads(commit_text)
 		tree_sha = commit_json['commit']['tree']['sha']
 		# download the tree
-		modules = await self._download_tree(repo_name, tree_sha, destination)
+		modules = await self.download_tree(repo_name, tree_sha, destination)
 		# download the submodules in that tree
 		if modules != None:
 			for module in modules:
@@ -106,12 +106,12 @@ class GitHubAPI:
 					module_commit = f.read()
 				os.remove(module_dest)
 				log.log_debug('GitHubAPI: Downloading {0}@{1} to {2} for commit {3}'.format(module['repo'], module_commit, module['path'], commit))
-				await self._download_commit(module['repo'], module_commit, module_dest)
+				await self.download_commit(module['repo'], module_commit, module_dest)
 
-	async def _download_tag(self, repo_name, tag_name, destination):
+	async def download_tag(self, repo_name, tag_name, destination):
 		destination = self._check_path_dir(destination)
 		log.log_debug('GitHubAPI: Get tags from repo {0}'.format(repo_name))
-		tags_url = Updater.API_TAGS.format(repo_name = repo_name)
+		tags_url = GitHubAPI.API_TAGS.format(repo_name = repo_name)
 		async with self.session.get(tags_url) as tags_resp:
 			tags_text = await tags_resp.text()
 			log.log_debug('GitHubAPI: Get tags returned {0}'.format(tags_text))
@@ -119,7 +119,7 @@ class GitHubAPI:
 		for tag in tags_json:
 			if tag['name'] == tag_name:
 				commit_sha = tag['commit']['sha']
-				await self._download_commit(repo_name, commit_sha, destination)
+				await self.download_commit(repo_name, commit_sha, destination)
 				break
 
 	def _parse_gitmodules(self, path):
