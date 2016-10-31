@@ -224,7 +224,7 @@ async def cmd_bug(message, *args):
 		raise ArgumentParseException()
 	text = ' '.join(args)
 	meta =  'Reported by {0.id} ({0.name}#{0.discriminator})\n'.format(message.author)
-	meta += 'Reported in {0.id}@{1.id} ({0.name}@{1.name})\n'.format(message.channel, message.server)
+	meta += 'Reported in channel {0.id} on {1.id} ({0.name} on {1.name})\n'.format(message.channel, message.server)
 
 	text += '\n' + meta
 	try:
