@@ -26,3 +26,6 @@ class VariableOutOfRangeException(BakaException):
 
 class MalformedExpressionException(BakaException):
 	pass
+
+class TagNotFoundException(BakaException):
+	pass

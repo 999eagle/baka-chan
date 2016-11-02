@@ -10,6 +10,7 @@ import re
 import globals
 import log
 import platform_specific
+from errors import *
 
 class GitHubAPI:
 	API_BASE = 'https://api.github.com/'
@@ -122,11 +123,12 @@ class GitHubAPI:
 			tags_text = await tags_resp.text()
 			log.log_debug('GitHubAPI: Get tags returned {0}'.format(tags_text))
 			tags_json = json.loads(tags_text)
-		for tag in tags_json:
-			if tag['name'] == tag_name:
-				commit_sha = tag['commit']['sha']
-				await self.download_commit(repo_name, commit_sha, destination)
-				break
+		tag = [x for x in tags_json if x['name'] == tag_name]
+		if len(tag) == 0:
+			raise TagNotFoundException()
+		tag = tag[0]
+		commit_sha = tag['commit']['sha']
+		await self.download_commit(repo_name, commit_sha, destination)
 
 	def _parse_gitmodules(self, path):
 		modules = []
