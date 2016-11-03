@@ -38,12 +38,14 @@ class Config(object):
 			old_version = '0'
 			if 'config_version' in sect_general:
 				old_version = sect_general['config_version']
-			if old_version == '0':
+			version = old_version
+			if version == '0':
 				self._update_config_to_v1()
-				old_version = '1'
-			if old_version != Config.version:
+				version = '1'
+			if version != Config.version:
 				raise InvalidConfigException('Config file has an unsupported version.')
 			else:
+				log.log_info('Configuration file has been upgraded from version {0} to version {1}. The old file can be found as "config.bak.ini".'.format(old_version, version))
 				shutil.copy2('config.ini', 'config.bak.ini')
 				with open('config.ini', 'w') as f:
 					self.parser.write(f)
