@@ -140,10 +140,12 @@ class GitHubAPI:
 			modules.append({'path': sect['path'], 'repo': url_pattern.search(sect['url']).group('repo')})
 		return modules
 
-	async def create_issue(self, repo_name, title, body):
+	async def create_issue(self, repo_name, title, body, labels = None):
 		log.log_debug('GitHubAPI: Creating new issue in repo {0}'.format(repo_name))
 		issue_url = GitHubAPI.API_ISSUES.format(repo_name = repo_name)
 		issue_post_data = { 'title': title, 'body': body }
+		if labels != None:
+			issue_post_data['labels'] = labels
 		async with self.session.post(issue_url, data = json.dumps(issue_post_data)) as issue_post_resp:
 			issue_text = await issue_post_resp.text()
 			log.log_debug('GitHubAPI: Create issue returned {0}'.format(issue_text))

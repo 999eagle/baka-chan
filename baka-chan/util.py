@@ -26,6 +26,11 @@ def is_float(s):
 	except ValueError:
 		return False
 
+def str2bool(str):
+	if str.lower() in ('true','1','t','y','yes'): return True
+	if str.lower() in ('false','0','f','n','no'): return False
+	raise ValueError('String "{0}" can\'t be converted into a boolean.'.format(str))
+
 def is_mention(s:str):
 	return s.startswith('<@') and s.endswith('>')
 

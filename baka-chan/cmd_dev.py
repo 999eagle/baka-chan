@@ -17,6 +17,12 @@ async def cmd_dev(message, args):
 			await send_message(message.channel, 'Baka-chan was enabled.')
 	if len(args) == 3:
 		if args[1] == 'update':
+			if not globals.config.has_github_config:
+				await send_message(message.channel, 'No login token specified.')
+				return
+			if not globals.config.has_github_update_repo:
+				await send_message(message.channel, 'No update repo specified.')
+				return
 			from updater import Updater
 			with Updater(globals.client.loop) as u:
 				await u.update_from_github_repo(message.channel, args[2])

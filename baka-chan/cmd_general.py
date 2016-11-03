@@ -228,12 +228,12 @@ async def cmd_bug(message, *args):
 
 	text += '\n' + meta
 	try:
-		if globals.config.has_updater_config:
+		if globals.config.has_github_config and globals.config.has_github_update_repo and globals.config.github_enable_reports:
 			with GitHubAPI(globals.client.loop) as gh:
 				lines = text.splitlines()
 				title = lines[0]
 				body = '\n'.join(lines[1:]) if len(lines) > 1 else ''
-				url = await gh.create_issue(globals.config.github_repo, 'Autoreport: ' + title, body)
+				url = await gh.create_issue(globals.config.github_update_repo, 'Autoreport: ' + title, body, labels = globals.config.github_issue_labels)
 				await send_message(message.channel, 'Your bug was reported as issue on GitHub. You can view it here: {0}'.format(url))
 		else:
 			await send_message(discord.User(id = globals.dev_id), 'Bug report: {0}'.format(text))

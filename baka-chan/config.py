@@ -1,4 +1,5 @@
 import configparser, logging
+import shutil
 
 from errors import *
 from util import *
@@ -7,8 +8,23 @@ import log
 class Config(object):
 	"""Manges the configuration for the bot."""
 
+	version = '1'
+
 	def __init__(self):
 		self.loaded = False
+
+	def _update_config_to_v1(self):
+		if 'config_version' in self.parser['General'] and self.parser['General']['config_version'] != '0':
+			raise InvalidConfigException('Can\'t upgrade to version 1.')
+		self.parser['General']['config_version'] = '1'
+		if 'Updater' in self.parser:
+			sect_updater = self.parser['Updater']
+			self.parser.add_section('GitHub')
+			self.parser['GitHub']['login_token'] = sect_updater['github_login_token']
+			self.parser['GitHub']['update_repo'] = sect_updater['github_repo']
+			self.parser['GitHub']['enable_reports'] = 'True'
+			self.parser['GitHub']['issue_labels'] = 'autoreport'
+			self.parser.remove_section('Updater')
 
 	def validate_loaded_config(self):
 		#
@@ -17,6 +33,20 @@ class Config(object):
 		if 'General' not in self.parser:
 			raise InvalidConfigException('Section "[General]" is missing.')
 		sect_general = self.parser['General']
+		# Absolute first thing: validate configuration version
+		if 'config_version' not in sect_general or sect_general['config_version'] != Config.version:
+			old_version = '0'
+			if 'config_version' in sect_general:
+				old_version = sect_general['config_version']
+			if old_version == '0':
+				self._update_config_to_v1()
+				old_version = '1'
+			if old_version != Config.version:
+				raise InvalidConfigException('Config file has an unsupported version.')
+			else:
+				shutil.copy2('config.ini', 'config.bak.ini')
+				with open('config.ini', 'w') as f:
+					self.parser.write(f)
 		# Validate log level
 		if 'log_level' not in sect_general:
 			raise InvalidConfigException('Key "log_level" in section "[General]" is missing.')
@@ -32,7 +62,10 @@ class Config(object):
 		if 'currency_cmd' not in sect_general:
 			raise InvalidConfigException('Key "currency_cmd" in section "[General]" is missing.')
 		if 'enable_songs' not in sect_general: raise InvalidConfigException('Key "enable_songs" in section "[General]" is missing.')
-		if sect_general['enable_songs'].lower() not in ('true','false'): raise InvalidConfigException('Key "enable_songs" in section "[General]" must be one of "true","false".')
+		try:
+			str2bool(sect_general['enable_songs'])
+		except ValueError:
+			raise InvalidConfigException('Key "enable_songs" in section "[General]" must be a boolean value.')
 		#
 		# Validate section [Discord]
 		#
@@ -58,7 +91,10 @@ class Config(object):
 		if 'rps_timeout' not in sect_games: raise InvalidConfigException('Key "rps_timeout" in section "[Games]" is missing.')
 		if not is_int(sect_games['rps_timeout']): raise InvalidConfigException('Key "rps_timeout" in section "[Games]" must have an integer value.')
 		if 'rps_allow_rpsls' not in sect_games: raise InvalidConfigException('Key "rps_allow_rpsls" in section "[Games]" is missing.')
-		if sect_games['rps_allow_rpsls'].lower() not in ('true','false'): raise InvalidConfigException('Key "rps_allow_rpsls" in section "[Games]" must be one of "true","false".')
+		try:
+			str2bool(sect_games['rps_allow_rpsls'])
+		except ValueError:
+			raise InvalidConfigException('Key "rps_allow_rpsls" in section "[Games]" must be a boolean value.')
 		#
 		# Validate section [API]
 		#
@@ -71,16 +107,24 @@ class Config(object):
 			# Validate Steam API config
 			if 'steam_api_key' not in sect_api: log.log_warning('Configuration: Key "steam_api_key" in section "[API]" is missing. Steam commands will not work.')
 		#
-		# Validate section [Updater]
+		# Validate section [GitHub]
 		#
-		if 'Updater' not in self.parser:
-			log.log_warning('Configuration: Section "[Updater]" is missing. Updating from repo will not work.')
+		if 'GitHub' not in self.parser:
+			log.log_warning('Configuration: Section "[GitHub]" is missing. GitHub integration will not work.')
 		else:
-			sect_updater = self.parser['Updater']
-			# Validate GitHub login token
-			if 'github_login_token' not in sect_updater: raise InvalidConfigException('Key "github_login_token" in section "[Updater]" is missing.')
-			# Validate GitHub repo
-			if 'github_repo' not in sect_updater: raise InvalidConfigException('Key "github_repo" in section "[Updater]" is missing.')
+			sect_github = self.parser['GitHub']
+			# Validate login token
+			if 'login_token' not in sect_github: raise InvalidConfigException('Key "login_token" in section "[GitHub]" is missing.')
+			# Validate update repo
+			if 'update_repo' not in sect_github: log.log_warning('Key "update_repo" in section "[GitHub]" is missing. Updating from GitHub repo will not work.')
+			# Validate reports
+			if 'enable_reports' not in sect_github: sect_github['enable_reports'] = 'false'
+			try:
+				str2bool(sect_github['enable_reports'])
+			except ValueError:
+				raise InvalidConfigException('Key "enable_reports" in section "[GitHub]" must be a boolean value.')
+			if str2bool(sect_github['enable_reports']):
+				if 'issue_labels' not in sect_github: sect_github['issue_labels'] = ''
 
 		self.loaded = True
 
@@ -131,7 +175,7 @@ class Config(object):
 	@property
 	def enable_songs(self) -> bool:
 		if not self.loaded: raise ConfigNotLoadedException()
-		return self.parser['General']['enable_songs'].lower() == 'true'
+		return str2bool(self.parser['General']['enable_songs'])
 
 	@property
 	def slots_count(self) -> int:
@@ -166,10 +210,10 @@ class Config(object):
 	@property
 	def rps_allow_rpsls(self) -> bool:
 		if not self.loaded: raise ConfigNotLoadedException()
-		return self.parser['Games']['rps_allow_rpsls'].lower() == 'true'
+		return str2bool(self.parser['Games']['rps_allow_rpsls'])
 
 	@property
-	def has_steam_api_key(self) -> str:
+	def has_steam_api_key(self) -> bool:
 		if not self.loaded: raise ConfigNotLoadedException()
 		return 'steam_api_key' in self.parser['API']
 
@@ -179,16 +223,32 @@ class Config(object):
 		return self.parser['API']['steam_api_key']
 
 	@property
-	def has_updater_config(self) -> str:
+	def has_github_config(self) -> bool:
 		if not self.loaded: raise ConfigNotLoadedException()
-		return 'Updater' in self.parser
+		return 'GitHub' in self.parser
 
 	@property
 	def github_login_token(self) -> str:
 		if not self.loaded: raise ConfigNotLoadedException()
-		return self.parser['Updater']['github_login_token']
+		return self.parser['GitHub']['login_token']
 
 	@property
-	def github_repo(self) -> str:
+	def has_github_update_repo(self) -> bool:
 		if not self.loaded: raise ConfigNotLoadedException()
-		return self.parser['Updater']['github_repo']
+		return 'update_repo' in self.parser['GitHub']
+
+	@property
+	def github_update_repo(self) -> str:
+		if not self.loaded: raise ConfigNotLoadedException()
+		return self.parser['GitHub']['update_repo']
+
+	@property
+	def github_enable_reports(self) -> bool:
+		if not self.loaded: raise ConfigNotLoadedException()
+		return str2bool(self.parser['GitHub']['enable_reports'])
+
+	@property
+	def github_issue_labels(self) -> list:
+		if not self.loaded: raise ConfigNotLoadedException()
+		labels = self.parser['GitHub']['issue_labels'].split(',')
+		return [l.strip() for l in labels]

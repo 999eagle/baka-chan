@@ -117,4 +117,4 @@ if __name__ == '__main__':
 		cleanup()
 
 	if globals.restart_on_exit:
-		os.execv(__file__, sys.argv)
+		os.execv(__file__, sys.arg)
