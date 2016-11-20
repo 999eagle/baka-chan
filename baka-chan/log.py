@@ -54,3 +54,6 @@ def log_warning(message):
 
 def log_error(message):
 	log(message, logging.ERROR)
+
+def shutdown():
+	logging.shutdown()

@@ -10,6 +10,8 @@ import discord, discord.opus
 import asyncio
 import datetime
 import sys
+import aiohttp
+import aiohttp.errors
 
 import globals
 import log
@@ -85,6 +87,10 @@ def main():
 		loop.run_until_complete(globals.client.logout())
 	except discord.LoginFailure:
 		log.log_error('Couldn\'t log in to discord')
+	except aiohttp.errors.ClientOSError:
+		log.log_warning('Lost connection to discord servers, restarting')
+		# TODO: configurable timeout and number of retries
+		globals.restart_on_exit = True
 	finally:
 		# gather all async tasks and cancel them
 		pending = asyncio.Task.all_tasks()
@@ -116,5 +122,6 @@ if __name__ == '__main__':
 		log.log_error(text)
 		cleanup()
 
+	log.shutdown()
 	if globals.restart_on_exit:
-		os.execv(__file__, sys.arg)
+		os.execv(__file__, sys.argv)
