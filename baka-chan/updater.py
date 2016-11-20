@@ -23,7 +23,7 @@ class Updater:
 	def __exit__(self, exc_type, exc_value, exc_traceback):
 		self.close()
 
-	async def update_from_github_repo(self, status_channel, tag):
+	async def update_from_github_repo(self, status_channel, tag, auto_restart):
 		log.log_info('Updating from GitHub repo. Commit/Tag: {0}'.format(tag))
 		await send_message(status_channel, 'Updating...')
 		try:
@@ -48,10 +48,14 @@ class Updater:
 			src_path = os.path.realpath(os.path.abspath(os.path.join('update', 'baka-chan')))
 			log.log_info('Copying files')
 			self._copy_files(src_path, dest_path)
-			log.log_info('Files copied, Restarting...')
-			await send_message(status_channel, 'Files copied, restarting...')
-			globals.restart_on_exit = True
-			await globals.client.logout()
+			if auto_restart:
+				log.log_info('Files copied, Restarting...')
+				await send_message(status_channel, 'Files copied, restarting...')
+				globals.restart_on_exit = True
+				await globals.client.logout()
+			else:
+				log.log_info('Files copied, please restart manually')
+				await send_message(status_channel, 'Files copied, please restart manually')
 		except:
 			text = traceback.format_exc()
 			log.log_error(text)

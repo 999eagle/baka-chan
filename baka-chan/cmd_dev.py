@@ -15,7 +15,7 @@ async def cmd_dev(message, args):
 			globals.disabled = False
 			await globals.client.change_presence(game = discord.Game(name = 'Use `{0}help`'.format(globals.config.cmd_tag)), status = discord.Status.online)
 			await send_message(message.channel, 'Baka-chan was enabled.')
-	if len(args) == 3:
+	if len(args) >= 3:
 		if args[1] == 'update':
 			if not globals.config.has_github_config:
 				await send_message(message.channel, 'No login token specified.')
@@ -23,6 +23,9 @@ async def cmd_dev(message, args):
 			if not globals.config.has_github_update_repo:
 				await send_message(message.channel, 'No update repo specified.')
 				return
+			auto_restart = True
+			if len(args) > 3:
+				auto_restart = str2bool(args[3])
 			from updater import Updater
 			with Updater(globals.client.loop) as u:
-				await u.update_from_github_repo(message.channel, args[2])
+				await u.update_from_github_repo(message.channel, args[2], auto_restart)
