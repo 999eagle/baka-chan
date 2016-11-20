@@ -102,6 +102,10 @@ class GitHubAPI:
 			commit_text = await commit_resp.text()
 			log.log_debug('GitHubAPI: Get commit {0} returned {1}'.format(commit, commit_text))
 			commit_json = json.loads(commit_text)
+		if 'message' in commit_json:
+			raise GitHubAPIException('Commit not found: {0}'.format(commit_json['message']))
+		elif 'commit' not in commit_json:
+			raise GitHubAPIException('Commit not found')
 		tree_sha = commit_json['commit']['tree']['sha']
 		# download the tree
 		modules = await self.download_tree(repo_name, tree_sha, destination)
@@ -125,7 +129,7 @@ class GitHubAPI:
 			tags_json = json.loads(tags_text)
 		tag = [x for x in tags_json if x['name'] == tag_name]
 		if len(tag) == 0:
-			raise TagNotFoundException()
+			raise GitHubAPIException('Tag not found')
 		tag = tag[0]
 		commit_sha = tag['commit']['sha']
 		await self.download_commit(repo_name, commit_sha, destination)

@@ -27,5 +27,5 @@ class VariableOutOfRangeException(BakaException):
 class MalformedExpressionException(BakaException):
 	pass
 
-class TagNotFoundException(BakaException):
+class GitHubAPIException(BakaException):
 	pass

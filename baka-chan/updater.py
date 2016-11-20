@@ -7,6 +7,7 @@ import subprocess
 import globals
 from github_api import GitHubAPI
 from util import *
+from errors import *
 
 class Updater:
 	def __init__(self, loop = None):
@@ -23,10 +24,14 @@ class Updater:
 		self.close()
 
 	async def update_from_github_repo(self, status_channel, tag):
-		log.log_info('Updating from GitHub repo with tag {0}'.format(tag))
+		log.log_info('Updating from GitHub repo. Commit/Tag: {0}'.format(tag))
 		await send_message(status_channel, 'Updating...')
 		try:
-			await self.github.download_tag(globals.config.github_update_repo, tag, os.path.realpath(os.path.abspath('update')))
+			try:
+				await self.github.download_tag(globals.config.github_update_repo, tag, os.path.realpath(os.path.abspath('update')))
+			except GitHubAPIException:
+				log.log_info('Couldn\'t download tag, trying to download commit')
+				await self.github.download_commit(globals.config.github_update_repo, tag, os.path.realpath(os.path.abspath('update')))
 			log.log_info('Content from GitHub repo downloaded')
 			await send_message(status_channel, 'Content downloaded')
 			python_exec = os.path.realpath(os.path.abspath(sys.executable))
