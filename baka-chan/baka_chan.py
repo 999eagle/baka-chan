@@ -89,7 +89,7 @@ def main():
 		log.log_error('Couldn\'t log in to discord')
 	except aiohttp.errors.ClientOSError:
 		log.log_warning('Lost connection to discord servers, restarting')
-		# TODO: configurable timeout and number of retries
+		loop.run_until_complete(asyncio.sleep(globals.config.reconnect_timeout))
 		globals.restart_on_exit = True
 	finally:
 		# gather all async tasks and cancel them

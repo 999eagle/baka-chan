@@ -17,6 +17,7 @@ class Config(object):
 		if 'config_version' in self.parser['General'] and self.parser['General']['config_version'] != '0':
 			raise InvalidConfigException('Can\'t upgrade to version 1.')
 		self.parser['General']['config_version'] = '1'
+		self.parser['General']['reconnect_timeout'] = '10'
 		if 'Updater' in self.parser:
 			sect_updater = self.parser['Updater']
 			self.parser.add_section('GitHub')
@@ -68,6 +69,8 @@ class Config(object):
 			str2bool(sect_general['enable_songs'])
 		except ValueError:
 			raise InvalidConfigException('Key "enable_songs" in section "[General]" must be a boolean value.')
+		if 'reconnect_timeout' not in sect_general: raise InvalidConfigException('Key "reconnect_timeout" in section "[General]" is missing.')
+		if not is_int(sect_general['reconnect_timeout']): raise InvalidConfigException('Key "reconnect_timeout" in section "[General]" must have an integer value.')
 		#
 		# Validate section [Discord]
 		#
@@ -178,6 +181,11 @@ class Config(object):
 	def enable_songs(self) -> bool:
 		if not self.loaded: raise ConfigNotLoadedException()
 		return str2bool(self.parser['General']['enable_songs'])
+
+	@property
+	def reconnect_timeout(self) -> int:
+		if not self.loaded: raise ConfigNotLoadedException()
+		return int(self.parser['General']['reconnect_timeout'])
 
 	@property
 	def slots_count(self) -> int:
