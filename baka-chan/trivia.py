@@ -1,4 +1,4 @@
-questions = {anime: (general: (('When was the first known Japanese animation produced?','1917'),
+questions = {anime: {general: (('When was the first known Japanese animation produced?','1917'),
                                ('The practice of dressing up like anime characters in Japan is called?','Cosplay'),
                                ('Which Hayao Miyazaki movie was based off of a book by a British author named Dianna Wynne Jones?','Castle in the sky'),
                                ('What genre of anime is aimed at girls between 10-18?','shoujo'),
@@ -18,7 +18,7 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                                ('What character type is a heroine that started as a villain trying to kill the protagonist but then switched to his side after falling in love with him?','mayadere'),
                                ('What anime character type is known as a quiet and often antisocial character?','dandere'),
                                ('It\'s common in anime for a character to pull their lower eyelid down to taunt someone. What is this called?','akanabe'),
-                               ('What character type is very loving and gentle to someone before their devotion becomes destructive in nature, often through violence and/or brutality?','yandere'))
+                               ('What character type is very loving and gentle to someone before their devotion becomes destructive in nature, often through violence and/or brutality?','yandere')),
                      aot: (('Who is the main character?','Eren','Eren Yeager'),
                            ('Which character loves to eat?','Sasha Blouse','Sasha'),
                            ('What is the outer wall named (The one taken by the titans)?','Wall Maria','Maria'),
@@ -36,7 +36,7 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                            ('"Only the victors are allowed to live. This world is merciless like that." Who said this?','Mikasa'),
                            ('What did Carla do for a living before she met Grisha?','waitress'),
                            ('"I just don\'t want those charred bones I saw to be disappointed in me. I... I know what I have to do now." Who said this?','Jean'),
-                           ('Who would become the commander of the Scouting Legion if something were to happen to Erwin?','Hange'))
+                           ('Who would become the commander of the Scouting Legion if something were to happen to Erwin?','Hange'))},
                      bleach: (('Which series features a location called the Soul Society?','Bleach'),
                               ('How many times have Ichigo and Renji battled?','2','two'),
                               ('What squad is Toushiro Hitsugaya the captain of?','10','10th','tenth','ten'),
@@ -52,7 +52,7 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                               ('What is the ritual performed by Shinigami to send Pluses to Soul Society?','Konso'),
                               ('Jigokucho which are used as messengers in Soul Society are what type of animal?','Butterfly'),
                               ('What are the artificial bodies used by Shinigami in the World of the Living?','Gigai'),
-                              ('What is the name of Karin\'s twin?','Yuzu'))
+                              ('What is the name of Karin\'s twin?','Yuzu')),
                      steinsgate: (('What anime does Kurisu\'s online name reference?','Dragon Ball Z','DBZ'),
                                   ('What is written on the Lab Members badge?','OSHMKUFA 2010'),
                                   ('Who does Mayuri work for?','Faris'),
@@ -71,7 +71,7 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                                   ('Steins;Gate is a collaboration work between 5pb. and who?','Nitro+'),
                                   ('What does the team call the text messages sent to the past?','Dmail','d-mail'),
                                   ('What nickname does Rintaro give to Moeka?','Shining Finger'),
-                                  ('What is the name of the ability to retain memories across world lines?','Reading Steiner'))
+                                  ('What is the name of the ability to retain memories across world lines?','Reading Steiner')),
                      codegeass: (('The character Li Xingke is a member of which group?','the chinese federation','chinese federation'),
                                  ('The leader of the Four Holy Swords is named...?','General Kyoshiro Tohdoh','general tohdoh','kyoshiro tohdoh','tohdoh'),
                                  ('What was the white Knightmare Frame piloted by Suzaku called?','Lancelot'),
@@ -117,7 +117,7 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                                  ('Who is the first prince of Britannia?','Odysseus eu Britannia','Odysseus'),
                                  ('What is the name of the aerial carrier of the Black Knights?','Ikaruga'),
                                  ('Who killed prince clovis?','lelouch'),
-                                 ('Who is Suzaku\'s cousin?','Kaguya Sumeragi','Kaguya'))
+                                 ('Who is Suzaku\'s cousin?','Kaguya Sumeragi','Kaguya')),
                      deathnote: (('Who is the second Kira?','Misa Amane','misa'),
                                  ('Who is the first Kira?','Light Yagami','Light'),
                                  ('Who is the third Kira?','Kyosuke Higuchi','Kyosuke'),
@@ -138,14 +138,14 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                                  ('Who was the first person that Light killed?','Kurou Otoharada','Kurou','Otoharada'),
                                  ('What does L hate?','Socks'),
                                  ('What is the character Mello (Mihael Keehl) addicted to eating?','Chocolate'),
-                                 ('If L sits normally, he claims his deductive reasoning reasoning will drop by what percent?','40','Forty'))
+                                 ('If L sits normally, he claims his deductive reasoning reasoning will drop by what percent?','40','Forty')),
                      dbz: (('How many dragon balls are there?','7','seven'),
                            ('Who does a complete set of dragon balls summon?','Shenron'),
                            ('What race is Piccolo?','Namekian','Nameks'),
                            ('Who kills Frieza?','Future Trunks','Trunks'),
                            ('Who sacrifices his life for Gohan from an incoming blast from Nappa in the Saiyan Saga?','Piccolo'),
                            ('Which android is the only one who marries?','18'),
-                           ('For which anime were these songs written: "Cha La Head Cha La" and "Boku-tachi wa Tenshi Datta"?','Dragon Ball Z'))
+                           ('For which anime were these songs written: "Cha La Head Cha La" and "Boku-tachi wa Tenshi Datta"?','Dragon Ball Z')),
                      fairytail:(('Where did Lucy get her guild mark?','Right hand'),
                                 ('Who was the first guild master of Fairy Tail?','Mavis'),
                                 ('Where is the location of the Fairy Tail guildhouse?','Magnolia Town','Magnolia'),
@@ -166,7 +166,7 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                                 ('What is Gray\'s last name?','Fullbuster'),
                                 ('Who taught Gray his magic?','Ur'),
                                 ('Which continent do the Ten Wizard Saints come from?','Ishgar'),
-                                ('Who uses Arc of Time magic?','Ultear'))
+                                ('Who uses Arc of Time magic?','Ultear')),
                      fullmetalalchemist: (('What is Edward\'s and Alphonse\'s last name?','Elric'),
                                           ('Who kills Hughes?','Envy'),
                                           ('What is the automotive armored prostheses?','automail'),
@@ -215,7 +215,7 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                                           ('What is the name of the Ishbalan who hates State Alchemists and murders them because he thinks it is an act of God?','Scar'),
                                           ('Which homunculus was the Fuhrer? ','Pride'),
                                           ('What are Colonel Mustang\'s gloves made of?','ignition cloth'),
-                                          ('What\'s Hughes\'s daughter\'s name? ','Elicia'))
+                                          ('What\'s Hughes\'s daughter\'s name? ','Elicia')),
                      naruto: (('What is the relationship between Hinata and Hanabi Hyuga?','sisters','sister'),
                               ('Who is Negi\'s cousin?','Hinata Hyuga','Hinata'),
                               ('Sakura, Sasuke, Rock Lee, and Kakashi are all characters from which anime?','Naruto'),
@@ -260,7 +260,7 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                               ('Which clan is Karin a member of?','Uzumaki'),
                               ('Where did the Uzumaki clan originate from?','Uzushiogakure','Land of Whirlpools','Hidden Eddy Village'),
                               ('Who used the Six Red Yang Formation?','Obito'),
-                              ('Who is officially the Sixth Hokage at the end of the manga series?','Kakashi'))
+                              ('Who is officially the Sixth Hokage at the end of the manga series?','Kakashi')),
                      onepiece: (('What\'s the bounty on Roronoa Zoro\'s head?','120,000,000','120000000'),
                                 ('Luffy ate what Devil Fruit?','Gomu Gomu','gum gum'),
                                 ('What year was the manga created?','1997'),
@@ -277,7 +277,7 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                                 ('Which character has a bounty under a pseudonym?','Usopp'),
                                 ('Who is the navigator of the Straw Hat Pirates?','Nami'),
                                 ('Whose crew did Nami work for before joining Luffy\'s crew?','Arlong','Arlong\'s','Arlongs',''),
-                                ('What fruit did Bartholomew Kuma eat?','Pawpaw fruit','Pawpaw','paw paw'))
+                                ('What fruit did Bartholomew Kuma eat?','Pawpaw fruit','Pawpaw','paw paw')),
                      onepunchman: (('Who is the main protagonist?','Saitama'),
                                    ('What city does Saitama live in?','Z-city','z city','z'),
                                    ('What city is the headquarters of the Hero Association in?','A-city','A city','A'),
@@ -299,7 +299,7 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                                    ('What is Genos\' hero name?','Demon Cyborg'),
                                    ('What are Genos\' tears made of?','oil'),
                                    ('Where did Saitama work before becoming a hero?','convenience store'),
-                                   ('What is Saitama also know as?','Caped Baldy'))
+                                   ('What is Saitama also know as?','Caped Baldy')),
                      ruronikenshin: (('What is the name of the principle of "swords that give life"?','katsujinken'),
                                      ('What is the name of the principle of "swords that kill"?','satsujinken'),
                                      ('What was the other name of the popular anime known as Samurai X?','Rurouni Kenshin'),
@@ -319,7 +319,7 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                                      ('How does Kenshin eventually die?','Tuberculosis'),
                                      ('What was Yahiko before he was rescued?','Pickpocket'),
                                      ('What is the name of Kenshin\'s sword style?','Hiten Mitsurugi'),
-                                     ('What is the name of Kenshin\'s master?','Hiko'))
+                                     ('What is the name of Kenshin\'s master?','Hiko')),
                      pokemon: (('In the original Japanese version, what is Ash Ketchum\'s name?','Satoshi'),
                                ('Pokemon was created by Stoshi Tajiri in which year?','1996'),
                                ('What starter pokemon did Ash Ketchum originally intend to choose?','Squirtle'),
@@ -336,8 +336,8 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                                ('Who is trying to become a Pokemon Performer?','Serena'),
                                ('What Pokemon is Todd Snap trying to take a picture of?','Articuno'),
                                ('What is the name of Ritchie\'s Pikachu?','Sparky'),
-                               ('Who is the Professor of the Hoenn region?','Professor Birch','Birch'))
-             pokemon: (('Who\'s that pokemon? http://oi40.tinypic.com/vdeh4p.jpg','Slowbro'),
+                               ('Who is the Professor of the Hoenn region?','Professor Birch','Birch'))},
+{pokemon: (('Who\'s that pokemon? http://oi40.tinypic.com/vdeh4p.jpg','Slowbro'),
                        ('Who\'s that pokemon? http://oi44.tinypic.com/15q3kgn.jpg','Metapod'),
                        ('Who\'s that pokemon? http://oi41.tinypic.com/zksb52.jpg','Zubat'),
                        ('Who\'s that pokemon? http://oi42.tinypic.com/rjfic7.jpg','Magneton'),
@@ -487,8 +487,8 @@ questions = {anime: (general: (('When was the first known Japanese animation pro
                        ('Who\'s that pokemon? http://oi43.tinypic.com/2qlhd1e.jpg','Poliwrath'),
                        ('Who\'s that pokemon? http://oi41.tinypic.com/28kpvkw.jpg','Aerodactyl'),
                        ('Who\'s that pokemon? http://oi42.tinypic.com/ta34e9.jpg','Tangela'),
-                       ('Who\'s that pokemon? http://oi39.tinypic.com/2qt97om.jpg','Golduck'))
-             general: (('The Shatt-el-Arab (River of Arabia) is the confluence of which two other rivers? ','TIGRIS and EUPHRATES','euphrates and tigris'),
+                       ('Who\'s that pokemon? http://oi39.tinypic.com/2qt97om.jpg','Golduck'))},
+{general: (('The Shatt-el-Arab (River of Arabia) is the confluence of which two other rivers? ','TIGRIS and EUPHRATES','euphrates and tigris'),
                        ('Name the two families in Romeo and Juliet? ','MONTAGUE & CAPULET','montague and capulet','capulet and montague','capulet&montague'),
                        ('Which singer joined Mel Gibson in the movie Mad Max: Beyond The Thunderdome?','TINA TURNER'),
                        ('Vodka, Galliano and orange juice are used to make which classic cocktail?','HARVEY WALLBANGER'),
