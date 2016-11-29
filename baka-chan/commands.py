@@ -6,3 +6,4 @@ import cmd_rps
 if globals.config.has_steam_api_key:
 	import cmd_steam
 import cmd_admin
+import trivia

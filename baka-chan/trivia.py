@@ -1,3 +1,8 @@
+import random
+
+from command import Command
+from util import *
+
 questions = {'anime': {'general': (('When was the first known Japanese animation produced?','1917'),
                                    ('The practice of dressing up like anime characters in Japan is called?','Cosplay'),
                                    ('Which Hayao Miyazaki movie was based off of a book by a British author named Dianna Wynne Jones?','Castle in the sky'),
@@ -1182,3 +1187,6 @@ questions = {'anime': {'general': (('When was the first known Japanese animation
                        ('What does the koala eat exclusively?','Eucalyptus'),
                        ('What\'s the most abundant element on earth?','Oxygen'))}
 
+@Command ('trivia', help = 'Answer the trivia question correctly from the chosen category', usage = ('<category:str>',('optional','<subcategory:str>')))
+async def cmd_trivia(message,category,subcategory):
+	await send_message(message.channel, questions[category][subcategory][random.randint(0,len(subcategory) - 1)][0])
