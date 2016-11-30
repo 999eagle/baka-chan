@@ -1187,6 +1187,9 @@ questions = {'anime': {'general': (('When was the first known Japanese animation
                        ('What does the koala eat exclusively?','Eucalyptus'),
                        ('What\'s the most abundant element on earth?','Oxygen'))}
 
-@Command ('trivia', help = 'Answer the trivia question correctly from the chosen category', usage = ('<category:str>',('optional','<subcategory:str>')))
+@Command('trivia', help = 'Answer the trivia question correctly from the chosen category', usage = ('<category:str>',('optional','<subcategory:str>')))
 async def cmd_trivia(message,category,subcategory):
-	await send_message(message.channel, questions[category][subcategory][random.randint(0,len(subcategory) - 1)][0])
+	if len(subcategory) >  0:
+		await send_message(message.channel, questions[category][subcategory][random.randint(0,len(subcategory) - 1)][0])
+	else:
+		await send_message(message.channel, questions[category][random.randint(0,len(category) - 1)][0])
