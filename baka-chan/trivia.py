@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import random
+import globals
 
 from command import Command
 from util import *
@@ -2748,9 +2749,39 @@ questions = {'anime': {'general': (('When was the first known Japanese animation
 ('What\'s the first video game to become a television show','pacman'),
 ('What series is the theme "green hill zone" from?','Sonic The Hedgehog','Sonic'))}
 
+class Trivia:
+	def __init__(self):
+		self.games == []
+
+	async def roundover(self, game):
+		await asyncio.sleep(globals.config.trv_timeout)
+		self.end(game)
+		await send_message(message.channel, 'Times Up!')
+
+	def start(self, game):
+		self.games.attend(game)
+
+	def end(self, game):
+		self.games.remove(game)
+
+class TrvGame:
+	def __init__(self):
+		self.status == 0
+
 @Command('trivia', help = 'Answer the trivia question correctly from the chosen category', usage = ('<category:str>',('optional','<subcategory:str>')))
 async def cmd_trivia(message,category,subcategory):
-	if len(subcategory) >  0:
-		await send_message(message.channel, questions[category][subcategory][random.randint(0,len(subcategory) - 1)][0])
+	global question
+	if subcategory != None:
+		question = random.randint(0,len(subcategory.strip()) - 1)
+		await send_message(message.channel, questions[category][subcategory.strip()][question][0])
 	else:
-		await send_message(message.channel, questions[category][random.randint(0,len(category) - 1)][0])
+		question = random.randint(0,len(category) - 1)
+		await send_message(message.channel, questions[category][question][0])
+
+def check(msg):
+	return msg.content.lower(msg) in question
+
+async def get_message(channel):
+	msg = await globals.client.wait_for_message(timeout={0},channel=channel,check=check).format(globals.config.trv_timeout)
+
+
