@@ -18,7 +18,7 @@ async def on_ready():
 async def on_member_join(member):
 	channel = globals.data_settings.get_welcome_channel(member.server.id)
 	if channel != '':
-		await send_message(globals.client.get_channel(channel), '{0} has joined the server for the first time, please assign him a role, @here'.format(member.mention))
+		await send_message(globals.client.get_channel(channel), '{0} has joined the server for the first time, please assign them a role, @here'.format(member.mention))
 
 @globals.client.event
 async def on_channel_update(before, after):
