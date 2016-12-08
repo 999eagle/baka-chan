@@ -26,7 +26,7 @@ def normalize_lyrics(s):
 	return s.lower().rstrip(' !.?').replace(',', '').replace('\'', '').replace('é', 'e')
 
 async def song_timeout(channel_id, song_idx, line_idx):
-	await asyncio.sleep(30)
+	await asyncio.sleep(120)
 	if _song_states[channel_id][song_idx] == line_idx:
 		del _song_states[channel_id][song_idx]
 
