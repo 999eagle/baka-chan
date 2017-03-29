@@ -10,6 +10,7 @@ from util import *
 from errors import *
 from expressions import Expression
 from github_api import GitHubAPI
+from wolfram_alpha_api import WolframAlphaAPI
 
 @Command('help', help = 'Shows this help.', allow_private = True)
 async def cmd_help(message):
@@ -97,6 +98,13 @@ async def cmd_roll(message, *args):
 			await send_message(message.channel, 'Rolling a ' + str(number) + ' sided :game_die: ...\nRolled a ' + str(random.randint(1, number)))
 	else:
 		raise ArgumentParseException()
+
+@Command('ask', help = 'Ask Baka-chan a question.', usage = ('*<question>',))
+async def cmd_ask(message, *args):
+	question = ' '.join(args)
+	with WolframAlphaAPI(globals.config.wolfram_app_id, globals.client.loop) as wolfram:
+		result = await wolfram.short_answer(question)
+		await send_message(message.channel, result)
 
 @Command('choose', help = 'Choose between different options.', usage = ('*<text> | <text> | ...',))
 async def cmd_choose(message, *args):
