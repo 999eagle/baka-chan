@@ -111,6 +111,8 @@ class Config(object):
 			sect_api = self.parser['API']
 			# Validate Steam API config
 			if 'steam_api_key' not in sect_api: log.log_warning('Configuration: Key "steam_api_key" in section "[API]" is missing. Steam commands will not work.')
+			# Validate Wolfram Alpha API config
+			if 'wolfram_app_id' not in sect_api: log.log_warning('Configuration: Key "wolfram_app_id" in section "[API]" is missing. Wolfram Alpha integration will not work.')
 		#
 		# Validate section [GitHub]
 		#
@@ -262,3 +264,13 @@ class Config(object):
 		if not self.loaded: raise ConfigNotLoadedException()
 		labels = self.parser['GitHub']['issue_labels'].split(',')
 		return [l.strip() for l in labels]
+
+	@property
+	def has_wolfram_app_id(self) -> bool:
+		if not self.loaded: raise ConfigNotLoadedException()
+		return 'wolfram_app_id' in self.parser['API']
+
+	@property
+	def wolfram_app_id(self) -> str:
+		if not self.loaded: raise ConfigNotLoadedException()
+		return self.parser['API']['wolfram_app_id']
