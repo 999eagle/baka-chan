@@ -34,7 +34,7 @@ class Updater:
 				await self.github.download_commit(globals.config.github_update_repo, tag, os.path.realpath(os.path.abspath('update')))
 			log.log_info('Content from GitHub repo downloaded')
 			await send_message(status_channel, 'Content downloaded')
-			python_exec = os.path.realpath(os.path.abspath(sys.executable))
+			python_exec = os.path.abspath(sys.executable)
 			log.log_info('Installing required packages for update')
 			pip_proc = subprocess.Popen([python_exec, '-m', 'pip', 'install', '--quiet', '-r', os.path.realpath(os.path.abspath(os.path.join('update','baka-chan','requirements.txt')))])
 			while pip_proc.returncode == None:
